@@ -147,6 +147,17 @@ When someone clicks a MovieCard, the handler in App saves that movie to `selecte
 When searching, App sets `mode` to `"search"`, resets `currentPage` to 1, and calls the Search API with the search text. The results replace the `movies` state, so MovieList automatically shows the search results instead. "Load More" pages through whichever endpoint matches the current `mode` (Now Playing or Search), incrementing `currentPage` and appending the new results to the existing `movies` array; it is hidden once `currentPage >= totalPages`. Clearing the search (or clicking "Now Playing") resets `mode` to `"nowPlaying"` and `currentPage` to 1, then re-fetches the Now Playing list. Sorting just reorders the `movies` array before MovieList renders it.
 
 
+**Responsive Breakpoints (Milestone 4):**
+
+The MovieList uses a CSS Grid that reflows by viewport width:
+
+- **Desktop (> 1024px):** `auto-fill` with `minmax(200px, 1fr)` — roughly 5-6 cards per row.
+- **Tablet (600px – 1024px):** `auto-fill` with `minmax(160px, 1fr)` — roughly 3-4 cards per row, smaller gap/padding.
+- **Mobile (< 600px):** fixed `repeat(2, 1fr)` — exactly 2 columns so posters stay legible and cards don't collapse to an unreadable width.
+
+Cards never overflow: `.movie-card` uses `overflow: hidden`, posters are `width: 100%`, and titles are clamped to 2 lines.
+
+
 **AI Feature Spec:**
 
 - **Display component:** MovieModal will show the AI recommendation below the movie plot

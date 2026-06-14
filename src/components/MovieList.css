@@ -1,3 +1,9 @@
+/*
+  Responsive breakpoints (Milestone 4):
+  - Desktop (> 1024px): wide cards, auto-fill with a 200px minimum (~5-6 per row)
+  - Tablet  (600px - 1024px): smaller minimum (160px) so ~3-4 cards fit per row
+  - Mobile  (< 600px): fixed 2 columns so posters stay legible and don't collapse
+*/
 .movie-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -7,11 +13,21 @@
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+/* Tablet */
+@media (max-width: 1024px) {
   .movie-list {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
     padding: 16px;
+  }
+}
+
+/* Mobile: two fixed columns keeps cards readable on narrow screens */
+@media (max-width: 600px) {
+  .movie-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
   }
 }
 
