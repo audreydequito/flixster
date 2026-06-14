@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import MovieList from './components/MovieList';
 import SearchBar from './components/SearchBar';
+import MovieModal from './components/MovieModal';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -14,6 +15,12 @@ const App = () => {
   const [mode, setMode] = useState('nowPlaying'); // 'nowPlaying' | 'search'
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Modal / movie-details state. selectedMovieId being non-null = modal is open.
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [detailsError, setDetailsError] = useState(null);
 
   // Builds the endpoint URL for the given mode/page/query.
   const buildUrl = (targetMode, page, query) => {
@@ -60,6 +67,42 @@ const App = () => {
     fetchMovies('nowPlaying', 1, '', false);
   }, []);
 
+  // Fetch full details whenever a movie is selected (modal opened).
+  useEffect(() => {
+    if (selectedMovieId === null) return;
+
+    const fetchDetails = async () => {
+      setDetailsLoading(true);
+      setDetailsError(null);
+      setMovieDetails(null);
+
+      try {
+        const response = await fetch(
+          `${BASE_URL}/movie/${selectedMovieId}?api_key=${API_KEY}`
+        );
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Movie details not found.');
+          }
+          if (response.status === 401) {
+            throw new Error('Unable to load details (API error).');
+          }
+          throw new Error('Failed to load movie details.');
+        }
+
+        const data = await response.json();
+        setMovieDetails(data);
+      } catch (err) {
+        setDetailsError(err.message || 'Failed to load movie details.');
+      } finally {
+        setDetailsLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [selectedMovieId]);
+
   const handleSearch = () => {
     if (!searchQuery.trim()) return; // don't call API on empty search
     setMode('search');
@@ -81,7 +124,14 @@ const App = () => {
   };
 
   const handleMovieClick = (movie) => {
-    console.log('Movie clicked:', movie);
+    setSelectedMovieId(movie.id);
+  };
+
+  // Close the modal and clear all details state so the next open starts clean.
+  const handleCloseModal = () => {
+    setSelectedMovieId(null);
+    setMovieDetails(null);
+    setDetailsError(null);
   };
 
   const hasMorePages = currentPage < totalPages;
@@ -119,6 +169,15 @@ const App = () => {
             Load More
           </button>
         </div>
+      )}
+
+      {selectedMovieId !== null && (
+        <MovieModal
+          movieDetails={movieDetails}
+          isLoading={detailsLoading}
+          error={detailsError}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

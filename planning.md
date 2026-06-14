@@ -29,10 +29,11 @@
     - Parent-Child Hierarchy: Child of App
 
 - **MovieModal:** 
-    - Responsibility: Shows detailed info about a movie when clicked, including an AI recommendation
-    - Renders: Large backdrop image, title, release date, runtime, genre tags, plot summary, AI watch recommendation, close button
-    - Props: movie (full details object), onClose (function), aiRecommendation (string), isLoadingAI (boolean)
-    - Manages any state: None
+    - Responsibility: Shows detailed info about a movie when a MovieCard is clicked. (AI recommendation is added in a later milestone.)
+    - Renders: Large backdrop image, title, release date, runtime, genre tags, plot summary, close button. Shows a loading state while details fetch, and a friendly error message if the fetch fails.
+    - Props: `movieDetails` (full details object or null), `isLoading` (boolean), `error` (string or null), `onClose` (function). [Later: `aiRecommendation`, `isLoadingAI`.]
+    - Manages any state: None — App owns the modal state and the details fetch; MovieModal is purely presentational.
+    - How it opens/closes: Opens when App's `selectedMovieId` is set (by a MovieCard click). Closes via the X button, clicking the backdrop overlay, or pressing Escape — each calls `onClose`, which clears `selectedMovieId` (and the fetched details/error) in App.
     - Parent-Child Hierarchy: Child of App
 
 - **Header:** 
@@ -74,10 +75,14 @@ List every component your app will need. For each component, define: responsibil
     - Errors to handle: Network failure, no matches found (show "No movies match your search"), empty search (don't call API)
 
 - **Movie Details Endpoint:**
-    - URL: `https://api.themoviedb.org/3/movie/{movie_id}`
-    - Parameters: `api_key`, movie ID in the URL
-    - Response fields used: `id`, `title`, `backdrop_path`, `overview`, `release_date`, `runtime`, `genres` (array with name), `vote_average`
-    - Errors to handle: Movie not found (close modal, show error), network failure (show error in modal)
+    - URL: `https://api.themoviedb.org/3/movie/{movie_id}` (the movie ID is a path parameter)
+    - Parameters: `api_key` (query), `{movie_id}` (path)
+    - Response fields used: `id`, `title`, `backdrop_path`, `overview`, `release_date`, `runtime`, `genres` (array of `{ id, name }`), `vote_average`
+    - Errors to handle:
+        - 404 movie not found → show "Movie details not found." in the modal
+        - 401 bad API key → show "Unable to load details (API error)." in the modal
+        - Network failure → show "Failed to load movie details." in the modal
+        - In every error case the modal stays open and shows the message (not a broken/blank modal); closing it clears the error.
 
 
 **State Architecture:**
@@ -107,10 +112,25 @@ List every component your app will need. For each component, define: responsibil
     - Owner: App component
     - Update trigger: Set to `"search"` when the user submits a search; set back to `"nowPlaying"` when the search is cleared. Tells "Load More" which endpoint to page against
 
-- **selectedMovie** (object or null)
+- **selectedMovieId** (number or null)
     - Initial value: `null`
     - Owner: App component
-    - Update trigger: When user clicks a MovieCard (becomes movie object); when modal closes (becomes null)
+    - Update trigger: Set to the movie's `id` when a MovieCard is clicked; cleared to `null` when the modal closes. This is the single source of truth for "is the modal open" — the modal renders when it is non-null.
+
+- **movieDetails** (object or null)
+    - Initial value: `null`
+    - Owner: App component
+    - Update trigger: Set after the Movie Details API returns for `selectedMovieId`; cleared to `null` when the modal closes. Passed to MovieModal as the `movieDetails` prop.
+
+- **detailsLoading** (boolean)
+    - Initial value: `false`
+    - Owner: App component
+    - Update trigger: `true` when the details fetch starts; `false` when it finishes. Passed to MovieModal so it can show a loading state.
+
+- **detailsError** (string or null)
+    - Initial value: `null`
+    - Owner: App component
+    - Update trigger: Set to a friendly message when the details fetch fails (404/401/network); cleared when a new fetch starts or the modal closes. Passed to MovieModal so it shows a message instead of a broken modal.
 
 - **sortOption** (string)
     - Initial value: `"default"`
@@ -142,7 +162,9 @@ List every component your app will need. For each component, define: responsibil
 
 When the app loads, App fetches movies from the Now Playing API. The response has a `results` array with movie objects. This array goes straight into the `movies` state. App passes this array to MovieList, which maps over it and creates one MovieCard for each movie. Each MovieCard gets a movie object (with id, title, poster, rating) and a click handler.
 
-When someone clicks a MovieCard, the handler in App saves that movie to `selectedMovie` state and uses the movie's id to fetch full details from the Movie Details API. This gives us runtime and genres, which the basic movie object doesn't have. App also sends the movie's title, genres, and plot to the AI API to get a recommendation. Both the detailed movie info and AI response get passed to MovieModal as props.
+When someone clicks a MovieCard, the click bubbles up through MovieList's `onMovieClick` to App's `handleMovieClick`, which stores the movie's `id` in `selectedMovieId`. A `useEffect` in App watches `selectedMovieId`: when it becomes non-null it fetches full details from the Movie Details API (using the id as a path parameter), setting `detailsLoading`/`detailsError` around the call and storing the result in `movieDetails`. The details give us runtime and genres, which the Now Playing/Search list objects don't include.
+
+App owns the "modal is open" state — there is no separate boolean; the modal renders whenever `selectedMovieId` is non-null. App passes `movieDetails`, `detailsLoading`, `detailsError`, and `onClose` to MovieModal. `onClose` (fired by the X button, backdrop click, or Escape key) resets `selectedMovieId`, `movieDetails`, and `detailsError` so the next open starts clean. (In a later milestone App also sends the title, genres, and plot to the AI API and passes the recommendation to MovieModal.)
 
 When searching, App sets `mode` to `"search"`, resets `currentPage` to 1, and calls the Search API with the search text. The results replace the `movies` state, so MovieList automatically shows the search results instead. "Load More" pages through whichever endpoint matches the current `mode` (Now Playing or Search), incrementing `currentPage` and appending the new results to the existing `movies` array; it is hidden once `currentPage >= totalPages`. Clearing the search (or clicking "Now Playing") resets `mode` to `"nowPlaying"` and `currentPage` to 1, then re-fetches the Now Playing list. Sorting just reorders the `movies` array before MovieList renders it.
 
