@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import MovieList from './components/MovieList';
 import SearchBar from './components/SearchBar';
 import SortControl from './components/SortControl';
@@ -151,9 +153,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>🎬 Flixster 🎬</h1>
-      </header>
+      <Header />
 
       <SearchBar
         searchQuery={searchQuery}
@@ -194,6 +194,8 @@ const App = () => {
           onClose={handleCloseModal}
         />
       )}
+
+      <Footer />
     </div>
   );
 };
