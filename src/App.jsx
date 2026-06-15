@@ -222,6 +222,10 @@ const App = () => {
           isLoading={detailsLoading}
           error={detailsError}
           onClose={handleCloseModal}
+          isFavorite={favoriteIds.has(selectedMovieId)}
+          isWatched={watchedIds.has(selectedMovieId)}
+          onToggleFavorite={() => movieDetails && toggleFavorite(movieDetails)}
+          onToggleWatched={() => movieDetails && toggleWatched(movieDetails)}
         />
       )}
 
