@@ -2,16 +2,6 @@
   text-align: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  color: white;
-  padding: 20px;
-}
-
 .load-more-container {
   display: flex;
   justify-content: center;
@@ -37,14 +27,5 @@
 @media (max-width: 600px) {
   .movie-card {
     width: 100%;
-  }
-
-  .search-bar {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .search-bar form {
-    flex-direction: column;
   }
 }

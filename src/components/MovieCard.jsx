@@ -14,7 +14,12 @@ function MovieCard({ movie, onClick }) {
       />
       <div className="movie-info">
         <h3 className="movie-title">{movie.title}</h3>
-        <p className="movie-rating">⭐ {movie.vote_average.toFixed(1)}</p>
+        <div className="movie-meta">
+          <p className="movie-rating">⭐ {movie.vote_average.toFixed(1)}</p>
+          <span className="card-icons" aria-hidden="true">
+            ♡ 👁
+          </span>
+        </div>
       </div>
     </div>
   );

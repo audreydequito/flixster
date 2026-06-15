@@ -35,6 +35,10 @@ function MovieModal({ movieDetails, isLoading, error, onClose }) {
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content" role="dialog" aria-modal="true">
+        <span className="modal-hint" aria-hidden="true">
+          ESC
+        </span>
+
         <button
           className="modal-close"
           onClick={onClose}

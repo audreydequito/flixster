@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/Header';
+import Hero from './components/Hero';
 import Footer from './components/Footer';
 import MovieList from './components/MovieList';
-import SearchBar from './components/SearchBar';
 import SortControl from './components/SortControl';
 import MovieModal from './components/MovieModal';
 
@@ -153,14 +153,14 @@ const App = () => {
 
   return (
     <div className="App">
-      <Header />
-
-      <SearchBar
+      <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
         onClear={handleClear}
       />
+
+      <Hero />
 
       <SortControl sortOption={sortOption} onSortChange={setSortOption} />
 

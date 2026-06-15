@@ -9,13 +9,18 @@ function SearchBar({ searchQuery, onSearchChange, onSearch, onClear }) {
   return (
     <div className="search-bar">
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search movies..."
-          className="search-input"
-        />
+        <span className="search-input-wrap">
+          <span className="search-icon" aria-hidden="true">
+            🔍
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search movies..."
+            className="search-input"
+          />
+        </span>
         <button type="submit" className="search-button">
           Search
         </button>
