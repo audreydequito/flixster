@@ -163,18 +163,10 @@
 }
 
 .modal-watch-link {
-  background: none;
-  border: none;
   color: #ffffff;
   font-size: 15px;
-  cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 4px;
-  padding: 0;
-}
-
-.modal-watch-link:hover {
-  color: #e50914;
 }
 
 .modal-icons {
@@ -283,17 +275,21 @@
   align-items: flex-start;
 }
 
+.modal-info-col {
+  flex: 1;
+  min-width: 0;
+}
+
 .modal-overview {
   color: #dddddd;
   font-size: 15px;
   line-height: 1.6;
   margin: 0;
-  flex: 1;
 }
 
 .modal-trailer-col {
-  flex: 0 0 240px;
-  max-width: 240px;
+  flex: 0 0 280px;
+  max-width: 280px;
 }
 
 .trailer-thumb {

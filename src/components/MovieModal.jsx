@@ -129,12 +129,9 @@ function MovieModal({
                     </span>
                     Play
                   </button>
-                  <button
-                    className="modal-watch-link"
-                    onClick={onToggleWatched}
-                  >
+                  <span className="modal-watch-link">
                     {isWatched ? 'Continue Watching' : 'Start Watching'}
-                  </button>
+                  </span>
                 </div>
 
                 <div className="modal-icons">
@@ -165,55 +162,58 @@ function MovieModal({
             <div className="modal-body">
               <hr className="modal-divider" />
 
-              <div className="modal-meta">
-                <span>{releaseDate}</span>
-                <span>•</span>
-                <span>{runtime}</span>
-                <span>•</span>
-                <span className="modal-rating-ring">
-                  <svg
-                    viewBox="0 0 44 44"
-                    width="44"
-                    height="44"
-                    aria-label={`Rating ${rating.toFixed(1)} out of 10`}
-                  >
-                    <circle
-                      className="ring-track"
-                      cx="22"
-                      cy="22"
-                      r={ringRadius}
-                    />
-                    <circle
-                      className="ring-progress"
-                      cx="22"
-                      cy="22"
-                      r={ringRadius}
-                      strokeDasharray={ringCircumference}
-                      strokeDashoffset={ringOffset}
-                    />
-                    <path
-                      className="ring-star"
-                      d="M22 14.5l1.84 3.73 4.12.6-2.98 2.9.7 4.1L22 27.9l-3.68 1.93.7-4.1-2.98-2.9 4.12-.6L22 14.5z"
-                    />
-                  </svg>
-                  <span className="modal-rating-value">{rating.toFixed(1)}</span>
-                </span>
-              </div>
-
-              {movieDetails.genres?.length > 0 && (
-                <div className="modal-genres">
-                  {movieDetails.genres.map((genre) => (
-                    <span key={genre.id} className="genre-tag">
-                      {genre.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-
               <div className="modal-columns">
-                <p className="modal-overview">
-                  {movieDetails.overview || 'No overview available.'}
-                </p>
+                <div className="modal-info-col">
+                  <div className="modal-meta">
+                    <span>{releaseDate}</span>
+                    <span>•</span>
+                    <span>{runtime}</span>
+                    <span className="modal-rating-ring">
+                      <svg
+                        viewBox="0 0 44 44"
+                        width="44"
+                        height="44"
+                        aria-label={`Rating ${rating.toFixed(1)} out of 10`}
+                      >
+                        <circle
+                          className="ring-track"
+                          cx="22"
+                          cy="22"
+                          r={ringRadius}
+                        />
+                        <circle
+                          className="ring-progress"
+                          cx="22"
+                          cy="22"
+                          r={ringRadius}
+                          strokeDasharray={ringCircumference}
+                          strokeDashoffset={ringOffset}
+                        />
+                        <path
+                          className="ring-star"
+                          d="M22 14.5l1.84 3.73 4.12.6-2.98 2.9.7 4.1L22 27.9l-3.68 1.93.7-4.1-2.98-2.9 4.12-.6L22 14.5z"
+                        />
+                      </svg>
+                      <span className="modal-rating-value">
+                        {rating.toFixed(1)}
+                      </span>
+                    </span>
+                  </div>
+
+                  {movieDetails.genres?.length > 0 && (
+                    <div className="modal-genres">
+                      {movieDetails.genres.map((genre) => (
+                        <span key={genre.id} className="genre-tag">
+                          {genre.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="modal-overview">
+                    {movieDetails.overview || 'No overview available.'}
+                  </p>
+                </div>
 
                 <div className="modal-trailer-col">
                   {trailer ? (
