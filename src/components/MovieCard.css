@@ -19,18 +19,7 @@
 }
 
 .movie-info {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 48px 12px 12px;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.85) 40%,
-    rgba(0, 0, 0, 0.5) 75%,
-    transparent 100%
-  );
+  padding: 10px 12px 12px;
   text-align: left;
 }
 
@@ -54,11 +43,18 @@
 }
 
 .movie-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 14px;
   color: #ffd700;
   margin: 0;
   font-weight: 500;
   white-space: nowrap;
+}
+
+.star-icon {
+  color: #ffd700;
 }
 
 .card-icons {
@@ -83,6 +79,10 @@
 
 .icon-button:hover {
   transform: scale(1.15);
+}
+
+.heart-button.active {
+  color: #e50914;
 }
 
 .eye-button.active {

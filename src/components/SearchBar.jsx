@@ -1,4 +1,5 @@
 import './SearchBar.css';
+import { SearchIcon } from './icons';
 
 function SearchBar({ searchQuery, onSearchChange, onSearch, onClear }) {
   const handleSubmit = (e) => {
@@ -11,7 +12,7 @@ function SearchBar({ searchQuery, onSearchChange, onSearch, onClear }) {
       <form onSubmit={handleSubmit}>
         <span className="search-input-wrap">
           <span className="search-icon" aria-hidden="true">
-            🔍
+            <SearchIcon size={16} />
           </span>
           <input
             type="text"

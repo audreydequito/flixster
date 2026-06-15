@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import './Sidebar.css';
+import { StarIcon, HeartIcon, EyeIcon, CloseIcon } from './icons';
 
 function Sidebar({
   isOpen,
@@ -50,7 +51,8 @@ function Sidebar({
                 <span className="sidebar-row-text">
                   <span className="sidebar-row-title">{movie.title}</span>
                   <span className="sidebar-row-rating">
-                    ⭐ {movie.vote_average.toFixed(1)}
+                    <StarIcon size={13} className="star-icon" />{' '}
+                    {movie.vote_average.toFixed(1)}
                   </span>
                 </span>
               </button>
@@ -60,7 +62,7 @@ function Sidebar({
                 onClick={() => onRemove(movie)}
                 aria-label={`Remove ${movie.title}`}
               >
-                ✕
+                <CloseIcon size={14} />
               </button>
             </li>
           );
@@ -89,7 +91,7 @@ function Sidebar({
             onClick={onClose}
             aria-label="Close menu"
           >
-            ✕
+            <CloseIcon />
           </button>
         </div>
 
@@ -112,12 +114,16 @@ function Sidebar({
 
         <div className="sidebar-sections">
           <section id="fav-section" className="sidebar-section">
-            <h3 className="sidebar-section-title">❤️ Favorites</h3>
+            <h3 className="sidebar-section-title">
+              <HeartIcon size={18} filled className="section-heart" /> Favorites
+            </h3>
             {renderList(favorites, 'No favorites yet', onToggleFavorite)}
           </section>
 
           <section id="watched-section" className="sidebar-section">
-            <h3 className="sidebar-section-title">👁 Watched</h3>
+            <h3 className="sidebar-section-title">
+              <EyeIcon size={18} /> Watched
+            </h3>
             {renderList(watched, 'Nothing watched yet', onToggleWatched)}
           </section>
         </div>

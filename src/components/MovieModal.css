@@ -112,6 +112,7 @@
   text-transform: uppercase;
   margin: 0 0 16px 0;
   color: #ffffff;
+  text-align: left;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
@@ -199,6 +200,10 @@
   transform: scale(1.15);
 }
 
+.heart-button.active {
+  color: #e50914;
+}
+
 .eye-button.active {
   color: #4fc3f7;
 }
@@ -248,9 +253,6 @@
   transform: rotate(90deg);
   transform-origin: 22px 22px;
   fill: #ffd700;
-  font-size: 16px;
-  text-anchor: middle;
-  dominant-baseline: central;
 }
 
 .modal-rating-value {

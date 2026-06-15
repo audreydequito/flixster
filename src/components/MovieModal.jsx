@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './MovieModal.css';
+import { HeartIcon, EyeIcon, EyeOffIcon, CloseIcon, PlayIcon } from './icons';
 
 function MovieModal({
   movieDetails,
@@ -71,12 +72,6 @@ function MovieModal({
     ? `https://img.youtube.com/vi/${trailer.key}/hqdefault.jpg`
     : null;
 
-  const playIcon = (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">
-      <path d="M8 5v14l11-7z" fill="currentColor" />
-    </svg>
-  );
-
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div
@@ -89,7 +84,7 @@ function MovieModal({
         </span>
 
         <button className="modal-close" onClick={onClose} aria-label="Close">
-          ✕
+          <CloseIcon />
         </button>
 
         {isLoading && <div className="modal-status">Loading details...</div>}
@@ -129,7 +124,9 @@ function MovieModal({
                     onClick={() => trailer && setIsTrailerExpanded(true)}
                     disabled={!trailer}
                   >
-                    <span className="modal-play-icon">{playIcon}</span>
+                    <span className="modal-play-icon">
+                      <PlayIcon size={16} />
+                    </span>
                     Play
                   </button>
                   <button
@@ -148,15 +145,7 @@ function MovieModal({
                     aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                     aria-pressed={isFavorite}
                   >
-                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-                      <path
-                        d="M12 20.7l-1.32-1.18C5.96 15.3 3 12.62 3 9.3 3 6.74 5.01 4.8 7.5 4.8c1.46 0 2.86.67 3.76 1.74L12 7.3l.74-.76C13.64 5.47 15.04 4.8 16.5 4.8 18.99 4.8 21 6.74 21 9.3c0 3.32-2.96 6-7.68 10.22L12 20.7z"
-                        fill={isFavorite ? '#e50914' : 'none'}
-                        stroke={isFavorite ? '#e50914' : '#ffffff'}
-                        strokeWidth="2"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <HeartIcon size={22} filled={isFavorite} />
                   </button>
 
                   <button
@@ -166,29 +155,7 @@ function MovieModal({
                     aria-label={isWatched ? 'Mark as not watched' : 'Mark as watched'}
                     aria-pressed={isWatched}
                   >
-                    {isWatched ? (
-                      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-                        <path
-                          d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinejoin="round"
-                        />
-                        <circle cx="12" cy="12" r="3" fill="currentColor" />
-                      </svg>
-                    ) : (
-                      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-                        <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                          <path d="M2 9c3.5 4 16.5 4 20 0" />
-                          <line x1="4" y1="12.5" x2="3" y2="15.5" />
-                          <line x1="8" y1="14" x2="7.4" y2="17" />
-                          <line x1="12" y1="14.4" x2="12" y2="17.6" />
-                          <line x1="16" y1="14" x2="16.6" y2="17" />
-                          <line x1="20" y1="12.5" x2="21" y2="15.5" />
-                        </g>
-                      </svg>
-                    )}
+                    {isWatched ? <EyeIcon size={22} /> : <EyeOffIcon size={22} />}
                   </button>
                 </div>
               </div>
@@ -224,9 +191,10 @@ function MovieModal({
                       strokeDasharray={ringCircumference}
                       strokeDashoffset={ringOffset}
                     />
-                    <text className="ring-star" x="22" y="23">
-                      ★
-                    </text>
+                    <path
+                      className="ring-star"
+                      d="M22 14.5l1.84 3.73 4.12.6-2.98 2.9.7 4.1L22 27.9l-3.68 1.93.7-4.1-2.98-2.9 4.12-.6L22 14.5z"
+                    />
                   </svg>
                   <span className="modal-rating-value">{rating.toFixed(1)}</span>
                 </span>
@@ -256,7 +224,9 @@ function MovieModal({
                       style={{ backgroundImage: `url(${thumbUrl})` }}
                       aria-label="Play trailer"
                     >
-                      <span className="trailer-thumb-play">{playIcon}</span>
+                      <span className="trailer-thumb-play">
+                        <PlayIcon size={44} />
+                      </span>
                       <span className="trailer-thumb-label">trailer</span>
                     </button>
                   ) : (
