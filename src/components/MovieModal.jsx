@@ -2,6 +2,62 @@ import { useEffect, useState } from 'react';
 import './MovieModal.css';
 import { HeartIcon, EyeIcon, EyeOffIcon, CloseIcon, PlayIcon } from './icons';
 
+const AI_FALLBACK =
+  "We couldn't generate a recommendation for this one — check out the overview above!";
+
+// Calls OpenRouter for a short, spoiler-free watch recommendation.
+// Returns the AI text on success, or the friendly fallback string on any failure.
+async function getMovieInsight(title, genres, overview) {
+  const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+  try {
+    const response = await fetch(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'meta-llama/llama-3.3-70b-instruct:free',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are an enthusiastic but honest film critic. You give quick, ' +
+                'friendly watch recommendations that help a viewer decide if a movie ' +
+                'fits their evening. Follow these rules strictly: respond in plain text ' +
+                'with exactly 2 to 3 sentences; do not use first-person "I" statements; ' +
+                'do not reveal any plot spoilers, twists, or the ending; do not compare ' +
+                'to other films unless it genuinely helps orient the viewer; avoid ' +
+                'generic hype phrases like "a must-see" or "a cinematic masterpiece"; ' +
+                'give a take, not a plot summary. No markdown, headings, or lists.',
+            },
+            {
+              role: 'user',
+              content:
+                `Write a watch recommendation for this movie.\n\n` +
+                `Title: ${title}\n` +
+                `Genres: ${genres || 'Unknown'}\n` +
+                `Overview: ${overview || 'No overview available.'}`,
+            },
+          ],
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
+
+    const data = await response.json();
+    const text = data?.choices?.[0]?.message?.content?.trim();
+    if (!text) throw new Error('OpenRouter returned no content');
+    return text;
+  } catch (error) {
+    console.error('AI insight failed:', error);
+    return AI_FALLBACK;
+  }
+}
+
 function MovieModal({
   movieDetails,
   isLoading,
@@ -14,6 +70,11 @@ function MovieModal({
 }) {
   // When true, the trailer fills the whole modal (wireframe 4).
   const [isTrailerExpanded, setIsTrailerExpanded] = useState(false);
+
+  // AI "Watch Recommendation" state (Milestone 8). Lives here because the modal
+  // is the only consumer; re-runs per movie so it resets naturally.
+  const [aiInsight, setAiInsight] = useState(null);
+  const [loadingInsight, setLoadingInsight] = useState(false);
 
   // Escape collapses an expanded trailer first, otherwise closes the modal.
   useEffect(() => {
@@ -28,6 +89,31 @@ function MovieModal({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose, isTrailerExpanded]);
+
+  // Fetch the AI watch recommendation once details have loaded. Keyed on the
+  // movie id so opening a different movie starts fresh. `ignore` guards against
+  // a slow response landing after the user has switched movies.
+  useEffect(() => {
+    if (!movieDetails?.id) return;
+
+    let ignore = false;
+    setAiInsight(null);
+    setLoadingInsight(true);
+
+    const genres = (movieDetails.genres || []).map((g) => g.name).join(', ');
+
+    getMovieInsight(movieDetails.title, genres, movieDetails.overview).then(
+      (text) => {
+        if (ignore) return;
+        setAiInsight(text);
+        setLoadingInsight(false);
+      }
+    );
+
+    return () => {
+      ignore = true;
+    };
+  }, [movieDetails?.id]);
 
   // Clicking the dark overlay (but not the modal body) closes the modal.
   const handleOverlayClick = (e) => {
@@ -160,8 +246,6 @@ function MovieModal({
             </div>
 
             <div className="modal-body">
-              <hr className="modal-divider" />
-
               <div className="modal-columns">
                 <div className="modal-info-col">
                   <div className="modal-meta">
@@ -191,7 +275,7 @@ function MovieModal({
                         />
                         <path
                           className="ring-star"
-                          d="M22 14.5l1.84 3.73 4.12.6-2.98 2.9.7 4.1L22 27.9l-3.68 1.93.7-4.1-2.98-2.9 4.12-.6L22 14.5z"
+                          d="M22 14L23.88 19.41L29.61 19.53L25.04 22.99L26.70 28.47L22 25.20L17.30 28.47L18.96 22.99L14.39 19.53L20.12 19.41Z"
                         />
                       </svg>
                       <span className="modal-rating-value">
@@ -213,6 +297,17 @@ function MovieModal({
                   <p className="modal-overview">
                     {movieDetails.overview || 'No overview available.'}
                   </p>
+
+                  <div className="ai-insight">
+                    <h3 className="ai-insight-label">AI Watch Recommendation</h3>
+                    {loadingInsight ? (
+                      <p className="ai-insight-loading">
+                        ✨ Getting a recommendation…
+                      </p>
+                    ) : (
+                      <p className="ai-insight-text">{aiInsight}</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="modal-trailer-col">

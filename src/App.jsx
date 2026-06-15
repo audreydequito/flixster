@@ -4,7 +4,6 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import MovieList from './components/MovieList';
-import SortControl from './components/SortControl';
 import MovieModal from './components/MovieModal';
 import Sidebar from './components/Sidebar';
 
@@ -181,12 +180,12 @@ const App = () => {
         onSearch={handleSearch}
         onClear={handleClear}
         onMenuClick={() => setIsSidebarOpen(true)}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
       />
 
       <main className="App-main">
         <Hero />
-
-        <SortControl sortOption={sortOption} onSortChange={setSortOption} />
 
         {error && <div className="error">{error}</div>}
 

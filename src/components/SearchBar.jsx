@@ -1,5 +1,5 @@
 import './SearchBar.css';
-import { SearchIcon } from './icons';
+import { SearchIcon, CloseIcon } from './icons';
 
 function SearchBar({ searchQuery, onSearchChange, onSearch, onClear }) {
   const handleSubmit = (e) => {
@@ -21,13 +21,17 @@ function SearchBar({ searchQuery, onSearchChange, onSearch, onClear }) {
             placeholder="Search movies..."
             className="search-input"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              className="search-clear"
+              onClick={onClear}
+              aria-label="Clear search"
+            >
+              <CloseIcon size={16} />
+            </button>
+          )}
         </span>
-        <button type="submit" className="search-button">
-          Search
-        </button>
-        <button type="button" className="clear-button" onClick={onClear}>
-          Now Playing
-        </button>
       </form>
     </div>
   );

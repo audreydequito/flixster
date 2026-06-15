@@ -1,13 +1,22 @@
 .App-header {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 14px 32px;
+  padding: 14px 0;
   background-color: #141414;
   border-bottom: 1px solid #222;
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+/* Constrain to the same width/padding as the movie grid so the hamburger
+   lines up with the cards' right edge. */
+.header-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .nav-brand {
@@ -16,6 +25,7 @@
   gap: 12px;
   flex-shrink: 0;
   text-align: left;
+  margin-right: auto;
 }
 
 .brand-logo {
@@ -49,9 +59,20 @@
   color: #aaaaaa;
 }
 
-/* SearchBar fills the center of the navbar */
-.App-header .search-bar {
-  flex: 1;
+/* Search + sort share one row, absolutely centered against the full header
+   width so the brand/hamburger widths don't shift the search bar off-center. */
+.nav-controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.nav-controls .search-bar {
+  flex: 0 1 520px;
   padding: 0;
 }
 
@@ -75,14 +96,21 @@
 }
 
 @media (max-width: 600px) {
-  .App-header {
+  .header-inner {
     flex-wrap: wrap;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 0 16px;
   }
 
-  .App-header .search-bar {
-    flex-basis: 100%;
+  .nav-controls {
+    position: static;
+    transform: none;
     order: 3;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
+
+  .nav-controls .search-bar {
+    flex: 1 1 100%;
   }
 }

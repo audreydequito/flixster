@@ -41,38 +41,38 @@ function MovieCard({
       tabIndex={0}
       aria-label={`View details for ${movie.title}`}
     >
-      <img
-        src={posterUrl}
-        alt={`${movie.title} poster`}
-        className="movie-poster"
-      />
+      <div className="movie-poster-wrap">
+        <img
+          src={posterUrl}
+          alt={`${movie.title} poster`}
+          className="movie-poster"
+        />
+        <p className="movie-rating">
+          <StarIcon className="star-icon" /> {movie.vote_average.toFixed(1)}
+        </p>
+      </div>
       <div className="movie-info">
         <h3 className="movie-title">{movie.title}</h3>
-        <div className="movie-meta">
-          <p className="movie-rating">
-            <StarIcon className="star-icon" /> {movie.vote_average.toFixed(1)}
-          </p>
-          <div className="card-icons">
-            <button
-              type="button"
-              className={`icon-button heart-button ${isFavorite ? 'active' : ''}`}
-              onClick={handleFavorite}
-              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-              aria-pressed={isFavorite}
-            >
-              <HeartIcon filled={isFavorite} />
-            </button>
+        <div className="card-icons">
+          <button
+            type="button"
+            className={`icon-button heart-button ${isFavorite ? 'active' : ''}`}
+            onClick={handleFavorite}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            aria-pressed={isFavorite}
+          >
+            <HeartIcon filled={isFavorite} />
+          </button>
 
-            <button
-              type="button"
-              className={`icon-button eye-button ${isWatched ? 'active' : ''}`}
-              onClick={handleWatched}
-              aria-label={isWatched ? 'Mark as not watched' : 'Mark as watched'}
-              aria-pressed={isWatched}
-            >
-              {isWatched ? <EyeIcon /> : <EyeOffIcon />}
-            </button>
-          </div>
+          <button
+            type="button"
+            className={`icon-button eye-button ${isWatched ? 'active' : ''}`}
+            onClick={handleWatched}
+            aria-label={isWatched ? 'Mark as not watched' : 'Mark as watched'}
+            aria-pressed={isWatched}
+          >
+            {isWatched ? <EyeIcon /> : <EyeOffIcon />}
+          </button>
         </div>
       </div>
     </div>
