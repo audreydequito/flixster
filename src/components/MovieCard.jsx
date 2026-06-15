@@ -24,8 +24,23 @@ function MovieCard({
     onToggleWatched(movie);
   };
 
+  // Make the card activatable by keyboard (Enter/Space), like a button.
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <div className="movie-card" onClick={onClick}>
+    <div
+      className="movie-card"
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${movie.title}`}
+    >
       <img
         src={posterUrl}
         alt={`${movie.title} poster`}

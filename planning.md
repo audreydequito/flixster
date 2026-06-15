@@ -198,3 +198,12 @@ Cards never overflow: `.movie-card` uses `overflow: hidden`, posters are `width:
     - `aiRecommendation` (string or null) - stored in App, passed to MovieModal
     - `isLoadingAI` (boolean) - tracks if AI is still thinking, passed to MovieModal
 - **How it works:** When a movie is selected, App calls the OpenRouter API with the movie info. While waiting, MovieModal shows "Generating recommendation...". When done, it shows the AI text. If the AI call fails, show "Recommendation unavailable right now."
+
+
+**Visual Design Intent (Milestone 7):**
+
+- **Palette (3 colors on a dark base):** background `#141414` (near-black), surface `#1a1a1a` (cards/modal), brand red `#e50914` (primary actions/accents). Supporting: white `#ffffff` body text, muted gray `#cccccc` for secondary text, gold `#ffd700` for ratings. Dark base with light text suits a cinema/movie feel.
+- **Typography:** Google Font **Poppins** for headings (brand, hero, card/modal titles — geometric, modern) and **Inter** for body/UI text (highly legible at small sizes). Imported via `@import` in index.css. Headings 600–800 weight; body 400–500.
+- **MovieCards:** dark surface tiles with rounded corners and a poster on top; on hover they lift slightly (`translateY(-4px)`) and gain a soft shadow to add energy to the grid. The whole card is one keyboard-focusable control (Enter/Space opens the modal); the heart/eye remain independently focusable buttons.
+- **Modal:** dark semi-transparent overlay (`rgba(0,0,0,0.85)`) creates depth; the content surface has clear hierarchy — large title over the backdrop with a dark gradient for legibility, then a divider, then meta/genres/overview with a green rating ring and a trailer thumbnail.
+- **Accessibility intent:** every text/background pair meets WCAG 2.0 AA (4.5:1); all interactive elements (cards, buttons, close, sidebar links) are keyboard-reachable with a visible focus ring; all posters/backdrops have descriptive `alt` text; semantic landmarks (`<header>`, `<main>`, `<footer>`).

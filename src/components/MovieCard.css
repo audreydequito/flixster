@@ -12,6 +12,13 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
+/* overflow:hidden clips an outset outline, so use a ring + lift instead */
+.movie-card:focus-visible {
+  outline: none;
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 3px #ffffff, 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
 .movie-poster {
   width: 100%;
   height: auto;

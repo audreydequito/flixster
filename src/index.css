@@ -1,11 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+
 body {
   margin: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   background-color: #141414;
   color: #ffffff;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
 }
 
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+/* Visible focus ring for keyboard users on all interactive elements. */
+:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  border-radius: 4px;
 }

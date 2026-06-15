@@ -183,38 +183,40 @@ const App = () => {
         onMenuClick={() => setIsSidebarOpen(true)}
       />
 
-      <Hero />
+      <main className="App-main">
+        <Hero />
 
-      <SortControl sortOption={sortOption} onSortChange={setSortOption} />
+        <SortControl sortOption={sortOption} onSortChange={setSortOption} />
 
-      {error && <div className="error">{error}</div>}
+        {error && <div className="error">{error}</div>}
 
-      {!error && movies.length === 0 && !isLoading && (
-        <div className="no-movies">
-          {mode === 'search'
-            ? 'No movies match your search'
-            : 'No movies available'}
-        </div>
-      )}
+        {!error && movies.length === 0 && !isLoading && (
+          <div className="no-movies">
+            {mode === 'search'
+              ? 'No movies match your search'
+              : 'No movies available'}
+          </div>
+        )}
 
-      <MovieList
-        movies={sortedMovies}
-        onMovieClick={handleMovieClick}
-        favoriteIds={favoriteIds}
-        watchedIds={watchedIds}
-        onToggleFavorite={toggleFavorite}
-        onToggleWatched={toggleWatched}
-      />
+        <MovieList
+          movies={sortedMovies}
+          onMovieClick={handleMovieClick}
+          favoriteIds={favoriteIds}
+          watchedIds={watchedIds}
+          onToggleFavorite={toggleFavorite}
+          onToggleWatched={toggleWatched}
+        />
 
-      {isLoading && <div className="loading">Loading movies...</div>}
+        {isLoading && <div className="loading">Loading movies...</div>}
 
-      {hasMorePages && !isLoading && movies.length > 0 && (
-        <div className="load-more-container">
-          <button className="load-more-button" onClick={handleLoadMore}>
-            Load More
-          </button>
-        </div>
-      )}
+        {hasMorePages && !isLoading && movies.length > 0 && (
+          <div className="load-more-container">
+            <button className="load-more-button" onClick={handleLoadMore}>
+              Load More
+            </button>
+          </div>
+        )}
+      </main>
 
       {selectedMovieId !== null && (
         <MovieModal
