@@ -290,6 +290,7 @@
 .modal-trailer-col {
   flex: 0 0 280px;
   max-width: 280px;
+  align-self: center;
 }
 
 .trailer-thumb {
