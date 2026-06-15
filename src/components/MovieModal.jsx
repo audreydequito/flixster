@@ -55,6 +55,12 @@ function MovieModal({
 
   const runtime = formatRuntime(movieDetails?.runtime);
 
+  // Circular progress ring for the rating (score out of 10).
+  const rating = movieDetails?.vote_average ?? 0;
+  const ringRadius = 18;
+  const ringCircumference = 2 * Math.PI * ringRadius;
+  const ringOffset = ringCircumference * (1 - rating / 10);
+
   const trailer =
     movieDetails?.videos?.results?.find(
       (v) => v.site === 'YouTube' && v.type === 'Trailer'
@@ -193,8 +199,32 @@ function MovieModal({
                 <span>•</span>
                 <span>{runtime}</span>
                 <span>•</span>
-                <span className="modal-meta-rating">
-                  ⭐ {movieDetails.vote_average?.toFixed(1)}
+                <span className="modal-rating-ring">
+                  <svg
+                    viewBox="0 0 44 44"
+                    width="44"
+                    height="44"
+                    aria-label={`Rating ${rating.toFixed(1)} out of 10`}
+                  >
+                    <circle
+                      className="ring-track"
+                      cx="22"
+                      cy="22"
+                      r={ringRadius}
+                    />
+                    <circle
+                      className="ring-progress"
+                      cx="22"
+                      cy="22"
+                      r={ringRadius}
+                      strokeDasharray={ringCircumference}
+                      strokeDashoffset={ringOffset}
+                    />
+                    <text className="ring-star" x="22" y="23">
+                      ★
+                    </text>
+                  </svg>
+                  <span className="modal-rating-value">{rating.toFixed(1)}</span>
                 </span>
               </div>
 

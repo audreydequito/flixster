@@ -197,9 +197,45 @@
   margin-bottom: 16px;
 }
 
-.modal-meta-rating {
-  color: #ffd700;
-  font-weight: 600;
+.modal-rating-ring {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-rating-ring svg {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.ring-track {
+  fill: none;
+  stroke: #333;
+  stroke-width: 4;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: #21d07a;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+.ring-star {
+  /* counter-rotate so the star sits upright inside the rotated svg */
+  transform: rotate(90deg);
+  transform-origin: 22px 22px;
+  fill: #ffd700;
+  font-size: 16px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.modal-rating-value {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .modal-genres {
