@@ -136,6 +136,12 @@ List every component your app will need. For each component, define: responsibil
     - Initial value: `"default"`
     - Owner: App component
     - Update trigger: When user picks a new option from the sort dropdown
+    - Where the sort happens: The raw `movies` array is never mutated. App derives a sorted copy (`sortedMovies = [...movies]`) at **render time** based on `sortOption` and passes that copy to MovieList. Keeping `movies` untouched means Load More's append/pagination logic is unaffected. (Same category of operation as `parseForecastData` — a pure data transformation.)
+    - Sort direction per option:
+        - `"title"` → Title A→Z, ascending (`a.title.localeCompare(b.title)`)
+        - `"release_date"` → Release date newest-first, descending (`new Date(b.release_date) - new Date(a.release_date)`)
+        - `"vote_average"` → Vote average highest-first, descending (`b.vote_average - a.vote_average`)
+        - `"default"` → no sort (TMDb's original order)
 
 - **isLoading** (boolean)
     - Initial value: `false`
@@ -166,7 +172,7 @@ When someone clicks a MovieCard, the click bubbles up through MovieList's `onMov
 
 App owns the "modal is open" state — there is no separate boolean; the modal renders whenever `selectedMovieId` is non-null. App passes `movieDetails`, `detailsLoading`, `detailsError`, and `onClose` to MovieModal. `onClose` (fired by the X button, backdrop click, or Escape key) resets `selectedMovieId`, `movieDetails`, and `detailsError` so the next open starts clean. (In a later milestone App also sends the title, genres, and plot to the AI API and passes the recommendation to MovieModal.)
 
-When searching, App sets `mode` to `"search"`, resets `currentPage` to 1, and calls the Search API with the search text. The results replace the `movies` state, so MovieList automatically shows the search results instead. "Load More" pages through whichever endpoint matches the current `mode` (Now Playing or Search), incrementing `currentPage` and appending the new results to the existing `movies` array; it is hidden once `currentPage >= totalPages`. Clearing the search (or clicking "Now Playing") resets `mode` to `"nowPlaying"` and `currentPage` to 1, then re-fetches the Now Playing list. Sorting just reorders the `movies` array before MovieList renders it.
+When searching, App sets `mode` to `"search"`, resets `currentPage` to 1, and calls the Search API with the search text. The results replace the `movies` state, so MovieList automatically shows the search results instead. "Load More" pages through whichever endpoint matches the current `mode` (Now Playing or Search), incrementing `currentPage` and appending the new results to the existing `movies` array; it is hidden once `currentPage >= totalPages`. Clearing the search (or clicking "Now Playing") resets `mode` to `"nowPlaying"` and `currentPage` to 1, then re-fetches the Now Playing list. Sorting renders a sorted copy of `movies` (derived at render time from `sortOption`); the raw `movies` array is left untouched.
 
 
 **Responsive Breakpoints (Milestone 4):**

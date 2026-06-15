@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import MovieList from './components/MovieList';
 import SearchBar from './components/SearchBar';
+import SortControl from './components/SortControl';
 import MovieModal from './components/MovieModal';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -13,6 +14,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [mode, setMode] = useState('nowPlaying'); // 'nowPlaying' | 'search'
+  const [sortOption, setSortOption] = useState('default');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -136,6 +138,17 @@ const App = () => {
 
   const hasMorePages = currentPage < totalPages;
 
+  // Sort a derived copy at render time; the raw `movies` array stays untouched
+  // so Load More's append logic and pagination are unaffected.
+  const sortedMovies = [...movies];
+  if (sortOption === 'title') {
+    sortedMovies.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortOption === 'release_date') {
+    sortedMovies.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+  } else if (sortOption === 'vote_average') {
+    sortedMovies.sort((a, b) => b.vote_average - a.vote_average);
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -149,6 +162,8 @@ const App = () => {
         onClear={handleClear}
       />
 
+      <SortControl sortOption={sortOption} onSortChange={setSortOption} />
+
       {error && <div className="error">{error}</div>}
 
       {!error && movies.length === 0 && !isLoading && (
@@ -159,7 +174,7 @@ const App = () => {
         </div>
       )}
 
-      <MovieList movies={movies} onMovieClick={handleMovieClick} />
+      <MovieList movies={sortedMovies} onMovieClick={handleMovieClick} />
 
       {isLoading && <div className="loading">Loading movies...</div>}
 
