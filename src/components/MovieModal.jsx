@@ -110,19 +110,20 @@ function MovieModal({
 
         {!isLoading && !error && movieDetails && !isTrailerExpanded && (
           <>
-            {backdropUrl && (
-              <img
-                src={backdropUrl}
-                alt={`${movieDetails.title} backdrop`}
-                className="modal-backdrop"
-              />
-            )}
+            <div className="modal-hero">
+              {backdropUrl && (
+                <img
+                  src={backdropUrl}
+                  alt={`${movieDetails.title} backdrop`}
+                  className="modal-backdrop"
+                />
+              )}
 
-            <div className="modal-body">
-              <h2 className="modal-title">{movieDetails.title}</h2>
+              <div className="modal-hero-content">
+                <h2 className="modal-title">{movieDetails.title}</h2>
 
-              <div className="modal-actions-row">
-                <div className="modal-actions-left">
+                <div className="modal-actions-row">
+                  <div className="modal-actions-left">
                   <button
                     className="modal-play"
                     onClick={() => trailer && setIsTrailerExpanded(true)}
@@ -191,7 +192,10 @@ function MovieModal({
                   </button>
                 </div>
               </div>
+              </div>
+            </div>
 
+            <div className="modal-body">
               <hr className="modal-divider" />
 
               <div className="modal-meta">

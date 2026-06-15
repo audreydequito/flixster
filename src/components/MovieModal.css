@@ -65,11 +65,31 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 
+.modal-hero {
+  position: relative;
+  min-height: 280px;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+
 .modal-backdrop {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 10px 10px 0 0;
+}
+
+.modal-hero-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40px 24px 20px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
 }
 
 /* Full-modal trailer */
@@ -81,7 +101,7 @@
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 20px 24px 24px;
   text-align: left;
 }
 
@@ -92,6 +112,7 @@
   text-transform: uppercase;
   margin: 0 0 16px 0;
   color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
 /* Play / watch row + favorite & watched icons */
@@ -100,7 +121,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .modal-actions-left {
