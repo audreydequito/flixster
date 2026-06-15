@@ -28,9 +28,21 @@ function MovieModal({ movieDetails, isLoading, error, onClose }) {
       })
     : 'Unknown';
 
-  const runtime = movieDetails?.runtime
-    ? `${movieDetails.runtime} min`
-    : 'Unknown';
+  const formatRuntime = (totalMinutes) => {
+    if (!totalMinutes) return 'Unknown';
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours === 0) return `${minutes} min`;
+    return `${hours} hr ${minutes} min`;
+  };
+
+  const runtime = formatRuntime(movieDetails?.runtime);
+
+  const trailer =
+    movieDetails?.videos?.results?.find(
+      (v) => v.site === 'YouTube' && v.type === 'Trailer'
+    ) ||
+    movieDetails?.videos?.results?.find((v) => v.site === 'YouTube');
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -87,6 +99,21 @@ function MovieModal({ movieDetails, isLoading, error, onClose }) {
               <p className="modal-overview">
                 {movieDetails.overview || 'No overview available.'}
               </p>
+
+              <div className="modal-trailer-section">
+                <h3 className="modal-trailer-heading">Trailer</h3>
+                {trailer ? (
+                  <iframe
+                    className="modal-trailer"
+                    src={`https://www.youtube.com/embed/${trailer.key}`}
+                    title={`${movieDetails.title} trailer`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <p className="modal-no-trailer">No trailer available.</p>
+                )}
+              </div>
             </div>
           </>
         )}

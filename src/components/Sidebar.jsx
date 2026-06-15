@@ -1,0 +1,129 @@
+import { useEffect } from 'react';
+import './Sidebar.css';
+
+function Sidebar({
+  isOpen,
+  onClose,
+  favorites,
+  watched,
+  onMovieClick,
+  onToggleFavorite,
+  onToggleWatched,
+}) {
+  // Close on Escape key (only while open).
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleRowClick = (movie) => {
+    onMovieClick(movie);
+    onClose();
+  };
+
+  const renderList = (movies, emptyText, onRemove) => {
+    if (movies.length === 0) {
+      return <p className="sidebar-empty">{emptyText}</p>;
+    }
+    return (
+      <ul className="sidebar-list">
+        {movies.map((movie) => {
+          const thumb = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w185${movie.poster_path}`
+            : 'https://via.placeholder.com/92x138/1a1a1a/ffffff?text=No+Poster';
+          return (
+            <li key={movie.id} className="sidebar-row">
+              <button
+                type="button"
+                className="sidebar-row-main"
+                onClick={() => handleRowClick(movie)}
+              >
+                <img src={thumb} alt={`${movie.title} poster`} className="sidebar-thumb" />
+                <span className="sidebar-row-text">
+                  <span className="sidebar-row-title">{movie.title}</span>
+                  <span className="sidebar-row-rating">
+                    ⭐ {movie.vote_average.toFixed(1)}
+                  </span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="sidebar-remove"
+                onClick={() => onRemove(movie)}
+                aria-label={`Remove ${movie.title}`}
+              >
+                ✕
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
+  return (
+    <>
+      <div
+        className={`sidebar-backdrop ${isOpen ? 'open' : ''}`}
+        onClick={onClose}
+      />
+      <aside
+        className={`sidebar ${isOpen ? 'open' : ''}`}
+        role="dialog"
+        aria-label="Favorites and watched list"
+        aria-hidden={!isOpen}
+      >
+        <div className="sidebar-header">
+          <h2 className="sidebar-heading">My Movies</h2>
+          <button
+            type="button"
+            className="sidebar-close"
+            onClick={onClose}
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
+        </div>
+
+        <nav className="sidebar-nav">
+          <button
+            type="button"
+            className="sidebar-nav-link"
+            onClick={() => scrollToSection('fav-section')}
+          >
+            Favorites ({favorites.length})
+          </button>
+          <button
+            type="button"
+            className="sidebar-nav-link"
+            onClick={() => scrollToSection('watched-section')}
+          >
+            Watched ({watched.length})
+          </button>
+        </nav>
+
+        <div className="sidebar-sections">
+          <section id="fav-section" className="sidebar-section">
+            <h3 className="sidebar-section-title">❤️ Favorites</h3>
+            {renderList(favorites, 'No favorites yet', onToggleFavorite)}
+          </section>
+
+          <section id="watched-section" className="sidebar-section">
+            <h3 className="sidebar-section-title">👁 Watched</h3>
+            {renderList(watched, 'Nothing watched yet', onToggleWatched)}
+          </section>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+export default Sidebar;

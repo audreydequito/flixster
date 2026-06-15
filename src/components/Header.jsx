@@ -1,7 +1,7 @@
 import './Header.css';
 import SearchBar from './SearchBar';
 
-function Header({ searchQuery, onSearchChange, onSearch, onClear }) {
+function Header({ searchQuery, onSearchChange, onSearch, onClear, onMenuClick }) {
   return (
     <header className="App-header">
       <div className="nav-brand">
@@ -19,9 +19,14 @@ function Header({ searchQuery, onSearchChange, onSearch, onClear }) {
         onClear={onClear}
       />
 
-      <span className="nav-menu" aria-hidden="true">
+      <button
+        type="button"
+        className="nav-menu"
+        onClick={onMenuClick}
+        aria-label="Open menu"
+      >
         ☰
-      </span>
+      </button>
     </header>
   );
 }

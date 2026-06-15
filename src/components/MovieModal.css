@@ -106,6 +106,31 @@
   margin: 0;
 }
 
+.modal-trailer-section {
+  margin-top: 20px;
+}
+
+.modal-trailer-heading {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.modal-trailer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 8px;
+  display: block;
+}
+
+.modal-no-trailer {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
 .modal-status {
   padding: 48px 24px;
   text-align: center;

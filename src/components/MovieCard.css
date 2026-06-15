@@ -23,8 +23,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 24px 12px 12px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  padding: 48px 12px 12px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.85) 40%,
+    rgba(0, 0, 0, 0.5) 75%,
+    transparent 100%
+  );
   text-align: left;
 }
 
@@ -56,7 +62,29 @@
 }
 
 .card-icons {
-  font-size: 13px;
-  color: #cccccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   white-space: nowrap;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.15s, color 0.15s;
+}
+
+.icon-button:hover {
+  transform: scale(1.15);
+}
+
+.eye-button.active {
+  color: #4fc3f7;
 }

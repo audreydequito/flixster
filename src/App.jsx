@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import MovieList from './components/MovieList';
 import SortControl from './components/SortControl';
 import MovieModal from './components/MovieModal';
+import Sidebar from './components/Sidebar';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -25,6 +26,11 @@ const App = () => {
   const [movieDetails, setMovieDetails] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [detailsError, setDetailsError] = useState(null);
+
+  // Favorites / watched lists (full movie objects). Session-only — no persistence.
+  const [favorites, setFavorites] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Builds the endpoint URL for the given mode/page/query.
   const buildUrl = (targetMode, page, query) => {
@@ -82,7 +88,7 @@ const App = () => {
 
       try {
         const response = await fetch(
-          `${BASE_URL}/movie/${selectedMovieId}?api_key=${API_KEY}`
+          `${BASE_URL}/movie/${selectedMovieId}?api_key=${API_KEY}&append_to_response=videos`
         );
 
         if (!response.ok) {
@@ -131,6 +137,18 @@ const App = () => {
     setSelectedMovieId(movie.id);
   };
 
+  // Add/remove a movie from a list by id.
+  const toggleInList = (setList) => (movie) => {
+    setList((prev) =>
+      prev.some((m) => m.id === movie.id)
+        ? prev.filter((m) => m.id !== movie.id)
+        : [...prev, movie]
+    );
+  };
+
+  const toggleFavorite = toggleInList(setFavorites);
+  const toggleWatched = toggleInList(setWatched);
+
   // Close the modal and clear all details state so the next open starts clean.
   const handleCloseModal = () => {
     setSelectedMovieId(null);
@@ -139,6 +157,10 @@ const App = () => {
   };
 
   const hasMorePages = currentPage < totalPages;
+
+  // Id lookups for fast per-card on/off checks.
+  const favoriteIds = new Set(favorites.map((m) => m.id));
+  const watchedIds = new Set(watched.map((m) => m.id));
 
   // Sort a derived copy at render time; the raw `movies` array stays untouched
   // so Load More's append logic and pagination are unaffected.
@@ -158,6 +180,7 @@ const App = () => {
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
         onClear={handleClear}
+        onMenuClick={() => setIsSidebarOpen(true)}
       />
 
       <Hero />
@@ -174,7 +197,14 @@ const App = () => {
         </div>
       )}
 
-      <MovieList movies={sortedMovies} onMovieClick={handleMovieClick} />
+      <MovieList
+        movies={sortedMovies}
+        onMovieClick={handleMovieClick}
+        favoriteIds={favoriteIds}
+        watchedIds={watchedIds}
+        onToggleFavorite={toggleFavorite}
+        onToggleWatched={toggleWatched}
+      />
 
       {isLoading && <div className="loading">Loading movies...</div>}
 
@@ -194,6 +224,16 @@ const App = () => {
           onClose={handleCloseModal}
         />
       )}
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        favorites={favorites}
+        watched={watched}
+        onMovieClick={handleMovieClick}
+        onToggleFavorite={toggleFavorite}
+        onToggleWatched={toggleWatched}
+      />
 
       <Footer />
     </div>
