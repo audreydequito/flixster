@@ -1,5 +1,13 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* fill #root so .App-main can grow and push the footer down */
+}
+
+/* Grow to absorb leftover vertical space, keeping the footer at the bottom. */
+.App-main {
+  flex: 1;
 }
 
 /* Section heading above the movie grid (e.g. "Now Playing") — same content

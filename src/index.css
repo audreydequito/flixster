@@ -66,6 +66,14 @@ body {
   color: var(--text);
 }
 
+/* Full-height layout so the footer is pushed to the bottom of the viewport
+   even when there's little content (e.g. an empty search result). */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 h1,
 h2,
 h3 {
