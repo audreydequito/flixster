@@ -99,7 +99,7 @@ Deployed Application (optional): [Flixster Deployed Site](https://flixster-rnw1.
   - [x] If the movie is already watched:
     - [x] Clicking on the visual element should mark the movie as *not* watched.
     - [x] There should be visual feedback (such as the eye turning a different color) to show that the movie has not been watched.
-- [ ] **Sidebar**
+- [x] **Sidebar**
   - [x] The website includes a side navigation bar.
   - [ ] The sidebar has three pages:
     - [ ] Home
