@@ -1,14 +1,29 @@
 import { useEffect, useState } from 'react';
 import './MovieModal.css';
-import { HeartIcon, EyeIcon, EyeOffIcon, CloseIcon, PlayIcon } from './icons';
+import { HeartIcon, EyeIcon, EyeOffIcon, CloseIcon, PlayIcon, BackIcon, FilmIcon } from './icons';
 
 const AI_FALLBACK =
   "We couldn't generate a recommendation for this one — check out the overview above!";
 
-// Calls OpenRouter for a short, spoiler-free watch recommendation.
-// Returns the AI text on success, or the friendly fallback string on any failure.
-async function getMovieInsight(title, genres, overview) {
-  const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+// OpenRouter's built-in free-models router: picks a random available free
+// model per call and filters out ones that are down. A single retry covers the
+// rare case where its random pick lands on a rate-limited model.
+const FREE_MODEL = 'openrouter/free';
+const MAX_ATTEMPTS = 3;
+
+const SYSTEM_PROMPT =
+  'You are an enthusiastic but honest film critic. You give quick, ' +
+  'friendly watch recommendations that help a viewer decide if a movie ' +
+  'fits their evening. Follow these rules strictly: respond in plain text ' +
+  'with exactly 2 to 3 sentences; do not use first-person "I" statements; ' +
+  'do not reveal any plot spoilers, twists, or the ending; do not compare ' +
+  'to other films unless it genuinely helps orient the viewer; avoid ' +
+  'generic hype phrases like "a must-see" or "a cinematic masterpiece"; ' +
+  'give a take, not a plot summary. No markdown, headings, or lists.';
+
+// One call to the free-models router. Returns the text on success, or null if
+// it should be retried (rate-limited / errored / empty response).
+async function requestInsight(API_KEY, userContent) {
   try {
     const response = await fetch(
       'https://openrouter.ai/api/v1/chat/completions',
@@ -19,43 +34,47 @@ async function getMovieInsight(title, genres, overview) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'meta-llama/llama-3.3-70b-instruct:free',
+          model: FREE_MODEL,
           messages: [
-            {
-              role: 'system',
-              content:
-                'You are an enthusiastic but honest film critic. You give quick, ' +
-                'friendly watch recommendations that help a viewer decide if a movie ' +
-                'fits their evening. Follow these rules strictly: respond in plain text ' +
-                'with exactly 2 to 3 sentences; do not use first-person "I" statements; ' +
-                'do not reveal any plot spoilers, twists, or the ending; do not compare ' +
-                'to other films unless it genuinely helps orient the viewer; avoid ' +
-                'generic hype phrases like "a must-see" or "a cinematic masterpiece"; ' +
-                'give a take, not a plot summary. No markdown, headings, or lists.',
-            },
-            {
-              role: 'user',
-              content:
-                `Write a watch recommendation for this movie.\n\n` +
-                `Title: ${title}\n` +
-                `Genres: ${genres || 'Unknown'}\n` +
-                `Overview: ${overview || 'No overview available.'}`,
-            },
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userContent },
           ],
         }),
       }
     );
 
-    if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
+    if (!response.ok) {
+      console.warn(`OpenRouter returned ${response.status}, retrying`);
+      return null;
+    }
 
     const data = await response.json();
-    const text = data?.choices?.[0]?.message?.content?.trim();
-    if (!text) throw new Error('OpenRouter returned no content');
-    return text;
+    return data?.choices?.[0]?.message?.content?.trim() || null;
   } catch (error) {
-    console.error('AI insight failed:', error);
-    return AI_FALLBACK;
+    console.warn('OpenRouter request failed, retrying:', error);
+    return null;
   }
+}
+
+// Calls OpenRouter for a short, spoiler-free watch recommendation. Uses the
+// free-models router with a few retries (it picks randomly, so a fresh pick on
+// retry usually dodges a rate-limited model). Returns the AI text on success,
+// or the friendly fallback string if every attempt fails.
+async function getMovieInsight(title, genres, overview) {
+  const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const userContent =
+    `Write a watch recommendation for this movie.\n\n` +
+    `Title: ${title}\n` +
+    `Genres: ${genres || 'Unknown'}\n` +
+    `Overview: ${overview || 'No overview available.'}`;
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const text = await requestInsight(API_KEY, userContent);
+    if (text) return text;
+  }
+
+  console.error('AI insight failed: all attempts exhausted');
+  return AI_FALLBACK;
 }
 
 function MovieModal({
@@ -165,13 +184,26 @@ function MovieModal({
         role="dialog"
         aria-modal="true"
       >
-        <span className="modal-hint" aria-hidden="true">
-          ESCAPE
-        </span>
+        {isTrailerExpanded ? (
+          <button
+            className="modal-back"
+            onClick={() => setIsTrailerExpanded(false)}
+            aria-label="Back to details"
+          >
+            <BackIcon />
+            Back
+          </button>
+        ) : (
+          <>
+            <span className="modal-hint" aria-hidden="true">
+              ESCAPE
+            </span>
 
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          <CloseIcon />
-        </button>
+            <button className="modal-close" onClick={onClose} aria-label="Close">
+              <CloseIcon />
+            </button>
+          </>
+        )}
 
         {isLoading && <div className="modal-status">Loading details...</div>}
 
@@ -211,12 +243,42 @@ function MovieModal({
                     disabled={!trailer}
                   >
                     <span className="modal-play-icon">
-                      <PlayIcon size={16} />
+                      <PlayIcon size={24} />
                     </span>
                     Play
                   </button>
                   <span className="modal-watch-link">
                     {isWatched ? 'Continue Watching' : 'Start Watching'}
+                  </span>
+                  <span className="modal-rating-ring">
+                    <svg
+                      viewBox="0 0 44 44"
+                      width="44"
+                      height="44"
+                      aria-label={`Rating ${rating.toFixed(1)} out of 10`}
+                    >
+                      <circle
+                        className="ring-track"
+                        cx="22"
+                        cy="22"
+                        r={ringRadius}
+                      />
+                      <circle
+                        className="ring-progress"
+                        cx="22"
+                        cy="22"
+                        r={ringRadius}
+                        strokeDasharray={ringCircumference}
+                        strokeDashoffset={ringOffset}
+                      />
+                      <path
+                        className="ring-star"
+                        d="M22 14L23.88 19.41L29.61 19.53L25.04 22.99L26.70 28.47L22 25.20L17.30 28.47L18.96 22.99L14.39 19.53L20.12 19.41Z"
+                      />
+                    </svg>
+                    <span className="modal-rating-value">
+                      {rating.toFixed(1)}
+                    </span>
                   </span>
                 </div>
 
@@ -252,36 +314,6 @@ function MovieModal({
                     <span>{releaseDate}</span>
                     <span>•</span>
                     <span>{runtime}</span>
-                    <span className="modal-rating-ring">
-                      <svg
-                        viewBox="0 0 44 44"
-                        width="44"
-                        height="44"
-                        aria-label={`Rating ${rating.toFixed(1)} out of 10`}
-                      >
-                        <circle
-                          className="ring-track"
-                          cx="22"
-                          cy="22"
-                          r={ringRadius}
-                        />
-                        <circle
-                          className="ring-progress"
-                          cx="22"
-                          cy="22"
-                          r={ringRadius}
-                          strokeDasharray={ringCircumference}
-                          strokeDashoffset={ringOffset}
-                        />
-                        <path
-                          className="ring-star"
-                          d="M22 14L23.88 19.41L29.61 19.53L25.04 22.99L26.70 28.47L22 25.20L17.30 28.47L18.96 22.99L14.39 19.53L20.12 19.41Z"
-                        />
-                      </svg>
-                      <span className="modal-rating-value">
-                        {rating.toFixed(1)}
-                      </span>
-                    </span>
                   </div>
 
                   {movieDetails.genres?.length > 0 && (
@@ -297,17 +329,6 @@ function MovieModal({
                   <p className="modal-overview">
                     {movieDetails.overview || 'No overview available.'}
                   </p>
-
-                  <div className="ai-insight">
-                    <h3 className="ai-insight-label">AI Watch Recommendation</h3>
-                    {loadingInsight ? (
-                      <p className="ai-insight-loading">
-                        ✨ Getting a recommendation…
-                      </p>
-                    ) : (
-                      <p className="ai-insight-text">{aiInsight}</p>
-                    )}
-                  </div>
                 </div>
 
                 <div className="modal-trailer-col">
@@ -320,14 +341,31 @@ function MovieModal({
                       aria-label="Play trailer"
                     >
                       <span className="trailer-thumb-play">
-                        <PlayIcon size={44} />
+                        <PlayIcon size={28} />
                       </span>
-                      <span className="trailer-thumb-label">trailer</span>
                     </button>
                   ) : (
-                    <p className="modal-no-trailer">No trailer available.</p>
+                    <div className="trailer-thumb trailer-thumb-empty">
+                      <span className="trailer-thumb-play">
+                        <FilmIcon size={40} />
+                      </span>
+                      <span className="trailer-thumb-label">
+                        Trailer unavailable
+                      </span>
+                    </div>
                   )}
                 </div>
+              </div>
+
+              <div className="ai-insight">
+                <h3 className="ai-insight-label">AI Watch Recommendation</h3>
+                {loadingInsight ? (
+                  <p className="ai-insight-loading">
+                    ✨ Getting a recommendation…
+                  </p>
+                ) : (
+                  <p className="ai-insight-text">{aiInsight}</p>
+                )}
               </div>
             </div>
           </>

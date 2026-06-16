@@ -103,6 +103,17 @@ export function FilmIcon({ size = 24, ...props }) {
   );
 }
 
+export function BackIcon({ size = 18, ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>
+      <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </g>
+    </svg>
+  );
+}
+
 export function PlayIcon({ size = 16, ...props }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>

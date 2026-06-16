@@ -14,7 +14,7 @@
   background-color: #1a1a1a;
   border-radius: 10px;
   width: 100%;
-  max-width: 760px;
+  max-width: 920px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
@@ -65,6 +65,30 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 
+/* Back button shown while the trailer is expanded — returns to detail view */
+.modal-back {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 8px 10px;
+  border: none;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  z-index: 2;
+}
+
+.modal-back:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
 .modal-hero {
   position: relative;
   min-height: 280px;
@@ -90,6 +114,38 @@
     rgba(0, 0, 0, 0.6) 50%,
     transparent 100%
   );
+}
+
+/* Bring the title and actions in with a gentle, staggered fade-up on open */
+.modal-title,
+.modal-actions-row {
+  animation: hero-rise 0.5s ease both;
+}
+
+.modal-title {
+  animation-delay: 0.08s;
+}
+
+.modal-actions-row {
+  animation-delay: 0.2s;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-title,
+  .modal-actions-row {
+    animation: none;
+  }
 }
 
 /* Full-modal trailer */
@@ -156,15 +212,17 @@
 }
 
 .modal-play-icon {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   display: inline-flex;
   color: #141414;
 }
 
 .modal-watch-link {
   color: #ffffff;
+  font-family: 'Poppins', sans-serif;
   font-size: 15px;
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -192,12 +250,30 @@
   transform: scale(1.15);
 }
 
+/* Pop when toggled on */
 .heart-button.active {
   color: #e50914;
+  animation: icon-pop 0.35s ease;
 }
 
 .eye-button.active {
   color: #4fc3f7;
+  animation: icon-pop 0.35s ease;
+}
+
+@keyframes icon-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.4);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .modal-meta {
@@ -352,12 +428,34 @@
   background-color: rgba(0, 0, 0, 0.25);
 }
 
+.trailer-thumb-empty::before {
+  content: none;
+}
+
+/* Circular play badge centered over the trailer thumbnail */
 .trailer-thumb-play {
   position: relative;
-  width: 44px;
-  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.55);
+  border: 2px solid #ffffff;
   color: #ffffff;
   z-index: 1;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+/* Optically center the play triangle inside the circle */
+.trailer-thumb:not(.trailer-thumb-empty) .trailer-thumb-play svg {
+  margin-left: 3px;
+}
+
+.trailer-thumb:hover .trailer-thumb-play {
+  background-color: rgba(0, 0, 0, 0.75);
+  transform: scale(1.08);
 }
 
 .trailer-thumb-label {
@@ -367,10 +465,26 @@
   z-index: 1;
 }
 
-.modal-no-trailer {
-  margin: 0;
-  font-size: 14px;
-  color: #9b9b9b;
+/* Empty state: same 16:9 box as the thumbnail, but muted and non-interactive */
+.trailer-thumb-empty {
+  cursor: default;
+  border-style: dashed;
+  border-color: #3a3a3a;
+  background-color: #161616;
+  color: #888888;
+}
+
+/* The empty state keeps a plain icon (no circular badge) */
+.trailer-thumb-empty .trailer-thumb-play {
+  width: auto;
+  height: auto;
+  border: none;
+  background: none;
+  color: #555555;
+}
+
+.trailer-thumb-empty .trailer-thumb-label {
+  color: #888888;
 }
 
 .modal-status {

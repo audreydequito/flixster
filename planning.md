@@ -210,7 +210,7 @@ movie details, whenever a movie's modal is opened.
 
 - **OpenRouter endpoint & model:**
     - Endpoint: `https://openrouter.ai/api/v1/chat/completions`
-    - Model: `meta-llama/llama-3.3-70b-instruct:free` (free tier)
+    - Model: `openrouter/free` — OpenRouter's free-models router, which picks a random available free model per call and filters out ones that are down. The client retries up to 3 times, so a fresh random pick usually dodges any rate-limited model. (Earlier the code hand-rotated a fixed list — `llama-3.3-70b`, `gemma-4-31b`, `gpt-oss-120b` — but the built-in router does this more robustly.)
     - Auth: `Authorization: Bearer ${VITE_OPENROUTER_API_KEY}` — key stored in `.env` (gitignored, same pattern as `VITE_API_KEY`). Browser-side key is inherently visible in DevTools; acceptable for a free-tier dev project. A production app would proxy this through a backend.
 
 - **State location (decision):** State lives **inside MovieModal**, not App.
