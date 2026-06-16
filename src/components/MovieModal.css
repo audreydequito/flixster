@@ -570,4 +570,10 @@
   .modal-actions-row {
     flex-wrap: wrap;
   }
+
+  /* No physical keyboard on mobile — the ESCAPE hint is meaningless here, so
+     hide it (the close button remains for dismissing the modal). */
+  .modal-hint {
+    display: none;
+  }
 }

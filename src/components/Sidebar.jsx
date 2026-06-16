@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './Sidebar.css';
 import { StarIcon, HeartIcon, EyeIcon, CloseIcon } from './icons';
 
@@ -11,6 +11,10 @@ function Sidebar({
   onToggleFavorite,
   onToggleWatched,
 }) {
+  // Which list to show: 'favorites' or 'watched'. Tapping a nav tab filters
+  // the panel down to just that list.
+  const [filter, setFilter] = useState('favorites');
+
   // Close on Escape key (only while open).
   useEffect(() => {
     if (!isOpen) return;
@@ -20,10 +24,6 @@ function Sidebar({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
-
-  const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleRowClick = (movie) => {
     onMovieClick(movie);
@@ -103,44 +103,50 @@ function Sidebar({
         <nav className="sidebar-nav">
           <button
             type="button"
-            className="sidebar-nav-link"
-            onClick={() => scrollToSection('fav-section')}
+            className={`sidebar-nav-link ${filter === 'favorites' ? 'active' : ''}`}
+            onClick={() => setFilter('favorites')}
+            aria-pressed={filter === 'favorites'}
           >
             Favorites ({favorites.length})
           </button>
           <button
             type="button"
-            className="sidebar-nav-link"
-            onClick={() => scrollToSection('watched-section')}
+            className={`sidebar-nav-link ${filter === 'watched' ? 'active' : ''}`}
+            onClick={() => setFilter('watched')}
+            aria-pressed={filter === 'watched'}
           >
             Watched ({watched.length})
           </button>
         </nav>
 
         <div className="sidebar-sections">
-          <section id="fav-section" className="sidebar-section">
-            <h3 className="sidebar-section-title">
-              <HeartIcon size={18} filled className="section-heart" /> Favorites
-            </h3>
-            {renderList(
-              favorites,
-              <HeartIcon size={40} filled />,
-              'No favorites yet — tap the heart on a movie to save it here.',
-              onToggleFavorite
-            )}
-          </section>
+          {filter === 'favorites' && (
+            <section className="sidebar-section">
+              <h3 className="sidebar-section-title">
+                <HeartIcon size={18} filled className="section-heart" /> Favorites
+              </h3>
+              {renderList(
+                favorites,
+                <HeartIcon size={40} filled />,
+                'No favorites yet — tap the heart on a movie to save it here.',
+                onToggleFavorite
+              )}
+            </section>
+          )}
 
-          <section id="watched-section" className="sidebar-section">
-            <h3 className="sidebar-section-title">
-              <EyeIcon size={18} /> Watched
-            </h3>
-            {renderList(
-              watched,
-              <EyeIcon size={40} />,
-              'Nothing watched yet — mark movies with the eye icon to track them.',
-              onToggleWatched
-            )}
-          </section>
+          {filter === 'watched' && (
+            <section className="sidebar-section">
+              <h3 className="sidebar-section-title">
+                <EyeIcon size={18} /> Watched
+              </h3>
+              {renderList(
+                watched,
+                <EyeIcon size={40} />,
+                'Nothing watched yet — mark movies with the eye icon to track them.',
+                onToggleWatched
+              )}
+            </section>
+          )}
         </div>
       </aside>
     </>

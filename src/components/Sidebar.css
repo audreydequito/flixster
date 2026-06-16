@@ -98,6 +98,13 @@
   transform: translateY(-2px);
 }
 
+/* Selected tab — the list currently being shown. */
+.sidebar-nav-link.active {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
 .sidebar-sections {
   flex: 1;
   overflow-y: auto;
