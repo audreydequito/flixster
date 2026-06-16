@@ -60,7 +60,7 @@ Deployed Application (optional): [Flixster Deployed Site](https://flixster-rnw1.
     - [x] Search bar
     - [x] Movie grid
     - [x] Footer section
-    - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: To ease the grading process, please use the [color contrast checker](https://webaim.org/resources/contrastchecker/) to demonstrate to the grading team that text and background colors on your website have appropriate contrast. The Contrast Ratio should be above 4.5:1 and should have a green box surrounding it. 
+    - [x] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: To ease the grading process, please use the [color contrast checker](https://webaim.org/resources/contrastchecker/) to demonstrate to the grading team that text and background colors on your website have appropriate contrast. The Contrast Ratio should be above 4.5:1 and should have a green box surrounding it. 
 - [x] **Planning Documentation**
   - [x] Repository includes a `planning.md` file with:
     - [x] A **Component Architecture** section listing at least 5 components, each with its responsibility, what it renders, and its props.
@@ -71,13 +71,13 @@ Deployed Application (optional): [Flixster Deployed Site](https://flixster-rnw1.
   - [x] When a movie's detail modal is opened, an AI-generated watch recommendation is displayed alongside the movie details.
   - [x] A loading state is shown while the AI response is being generated, and a graceful fallback message is shown if the AI call fails.
   - [x] `planning.md` includes an **AI Feature Spec** documenting role, task, inputs, output format, constraints, and failure behavior for the AI call.
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: To ease the grading process, open your browser's DevTools **Network** tab, trigger the AI recommendation (open a movie modal), and show the outbound request going **directly to an AI API URL** (e.g., `openrouter.ai`) — not to a backend server URL. Graders need to see this call in the Network tab to award full credit.
+  - [x] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: To ease the grading process, open your browser's DevTools **Network** tab, trigger the AI recommendation (open a movie modal), and show the outbound request going **directly to an AI API URL** (e.g., `openrouter.ai`) — not to a backend server URL. Graders need to see this call in the Network tab to award full credit.
 
 #### STRETCH FEATURES
 
 - [x] **Deployment**
   - [x] Website is deployed via Render.
-  - [ ] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: For ease of grading, please use the deployed version of your website when creating your walkthrough. 
+  - [x] **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS**: For ease of grading, please use the deployed version of your website when creating your walkthrough. 
 - [x] **Embedded Movie Trailers**
   - [x] Within the pop-up modal displaying a movie's details, the movie trailer is viewable.
     - [x] When the trailer is clicked, users can play the movie trailer.
@@ -105,34 +105,37 @@ Deployed Application (optional): [Flixster Deployed Site](https://flixster-rnw1.
     - [ ] Home
     - [x] Favorites
     - [x] Watched
-  - [ ] The Home page displays all current movies in a grid view, the search bar, and the sort movies drop-down.
+  - [x] The Home page displays all current movies in a grid view, the search bar, and the sort movies drop-down.
   - [x] The Favorites page displays all favorited movies in a grid view.
   - [x] The Watched page displays all watched movies in a grid view.
 
 ### Walkthrough Video
 
-`TODO://` Paste the **shareable link** to your animated app walkthrough below (replace `ADD_LOOM_LINK_HERE`). GitHub markdown won't render an embedded Loom player, so a plain link is what graders will use. Make sure the link is public and playable before submitting. Ensure your walkthrough showcases the presence and/or functionality of all features you implemented above (check them off as you film!). Pay attention to any **VIDEO WALKTHROUGH SPECIAL INSTRUCTIONS** checkboxes listed above to ensure graders see the full functionality of your website. (🚫 Remove this paragraph after adding your walkthrough link.)
-
-**Walkthrough video:** [Flixster Walkthrough](ADD_LOOM_LINK_HERE)
+**Walkthrough video:** [Flixster Walkthrough](https://www.loom.com/share/2b6ce32bf3a844b98bcc7a965cdb12d6)
 
 ### Reflection
 
 * Did the topics discussed in your labs prepare you to complete the assignment? Be specific, which features in your weekly assignment did you feel unprepared to complete?
 
-Add your response here
+The labs gave me a solid foundation for the core React concepts I needed — using `useState` and `useEffect` to fetch data from the TMDb API and render it into a grid, lifting state up so components like the search bar and sort dropdown could share data, and breaking the UI into reusable components like `MovieCard`, `MovieList`, and `MovieModal`. Building the search and "load more" features felt natural after the lab work on state and conditional rendering. The features I felt less prepared for were the AI watch recommendation and the sidebar routing. Wiring up the AI call directly from the client (and handling its loading and failure states gracefully) took extra trial and error, and managing favorites/watched state across separate sidebar pages required me to think more carefully about where state should live than the labs had pushed me to.
 
 * If you had more time, what would you have done differently? Would you have added additional features? Changed the way your project responded to a particular event, etc.
-  
-Add your response here
+
+With more time I would have finished the Home page link in the sidebar so all three pages (Home, Favorites, Watched) are fully navigable, since that's the one required checkbox I didn't complete. I'd also persist favorites and watched movies to `localStorage` so they survive a page refresh, and add pagination or infinite scroll for search results instead of just the current movies. On the polish side, I'd refactor some of the prop-drilling into React Context to make the state flow cleaner, and add better error handling and retry logic for both the TMDb and AI API calls.
 
 * Reflect on your project demo, what went well? Were there things that maybe didn't go as planned? Did you notice something that your peer did that you would like to try next time?
 
-Add your response here
+The movie grid, search, sort, modal details, trailers, and the favorite/watched toggles all demoed smoothly, and the AI recommendation showing up live in the modal was a highlight. The main thing that didn't go fully as planned was the sidebar — the Home navigation isn't wired up yet, so I had to explain that during the demo. Watching my peers, I liked how one of them persisted state so their favorites stayed after a refresh, and another had really clean loading skeletons — both are things I'd like to lean into next time.
 
 ### Open-source libraries used
 
-- Add any links to open-source libraries used in your project.
+- [React](https://react.dev/) — component-based UI library used to build the entire front end.
+- [React DOM](https://react.dev/reference/react-dom) — renders the React component tree to the browser DOM.
+- [Vite](https://vitejs.dev/) — build tool and dev server used to scaffold and bundle the app.
+- [ESLint](https://eslint.org/) — linting for code quality and consistency.
+- [The Movie Database (TMDb) API](https://developer.themoviedb.org/docs) — source of all movie data, posters, and trailers.
+- [OpenRouter](https://openrouter.ai/) — AI API used to generate the watch recommendations shown in the movie detail modal.
 
 ### Shout out
 
-Give a shout out to somebody from your cohort that especially helped you during your project. This can be a fellow peer, instructor, TA, mentor, etc.
+Shout out to my advisor Danny, and my peer Heartwill for feedback.
