@@ -51,21 +51,21 @@
   line-height: 1;
 }
 
-/* Search + sort share one row, absolutely centered against the full header
-   width so the brand/hamburger widths don't shift the search bar off-center. */
+/* Search + sort sit on the right, next to the hamburger. The brand's
+   margin-right:auto pushes this group over. */
 .nav-controls {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
+  gap: 16px;
 }
 
 .nav-controls .search-bar {
-  flex: 0 1 1040px;
+  flex: 0 0 auto;
   padding: 0;
+}
+
+.nav-controls .search-bar.is-open {
+  flex: 0 1 320px;
 }
 
 .nav-menu {
@@ -95,14 +95,10 @@
   }
 
   .nav-controls {
-    position: static;
-    transform: none;
-    order: 3;
-    flex-basis: 100%;
     flex-wrap: wrap;
   }
 
-  .nav-controls .search-bar {
+  .nav-controls .search-bar.is-open {
     flex: 1 1 100%;
   }
 }

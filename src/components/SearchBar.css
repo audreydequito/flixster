@@ -3,6 +3,25 @@
   justify-content: center;
 }
 
+.search-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.search-toggle:hover,
+.search-toggle:focus-visible {
+  outline: none;
+  color: var(--accent);
+}
+
 .search-bar form {
   display: flex;
   width: 100%;
