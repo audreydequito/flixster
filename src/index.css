@@ -5,7 +5,8 @@
    whole app. */
 :root {
   /* base & surfaces */
-  --bg: #0d130f;          /* page — deep muted green-black */
+  --bg: #090d0a;          /* page — deep muted green-black */
+  --bg-rgb: 9, 13, 10;    /* rgb of --bg, for rgba() fades (keep in sync) */
   --bg-darkest: #080c09;  /* footer */
   --surface: #161e18;     /* cards / modal / inputs */
   --surface-2: #1f2921;   /* raised surfaces */

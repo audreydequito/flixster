@@ -21,7 +21,6 @@ function Header({
           </div>
           <div className="brand-text">
             <h1 className="brand-name">Lumière</h1>
-            <p className="tagline">where every frame finds the light</p>
           </div>
         </div>
 

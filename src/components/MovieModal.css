@@ -140,7 +140,10 @@
 
 .modal-backdrop {
   width: 100%;
-  height: auto;
+  /* Cap the hero height so the image sits shorter vertically; cover keeps it
+     filling the width without distortion. */
+  height: 340px;
+  object-fit: cover;
   display: block;
 }
 
