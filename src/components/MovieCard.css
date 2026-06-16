@@ -1,9 +1,30 @@
 .movie-card {
   position: relative;
   border-radius: 8px;
-  overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  /* Hidden until revealed on scroll-in (see .in-view). */
+  opacity: 0;
+  /* Depth for the subtle 3D poster tilt on hover. */
+  perspective: 900px;
+}
+
+/* Scroll-reveal: fade up when the card enters the viewport. Uses `both` so the
+   end state (transform: none) sticks, leaving the :hover lift free to apply.
+   Per-card animation-delay is set inline for a row stagger. */
+.movie-card.in-view {
+  animation: card-rise 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .movie-card:hover {
@@ -11,21 +32,67 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* overflow:hidden clips an outset outline, so use a ring + lift instead */
 .movie-card:focus-visible {
   outline: none;
   transform: translateY(-4px);
-  box-shadow: 0 0 0 3px #ffffff, 0 8px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 3px var(--accent), 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
 .movie-poster-wrap {
   position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 .movie-poster {
   width: 100%;
   height: auto;
   display: block;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+/* Lift, zoom, and tilt the poster slightly back in 3D space on hover/focus. */
+.movie-card:hover .movie-poster,
+.movie-card:focus-within .movie-poster {
+  transform: scale(1.06) rotateX(5deg);
+}
+
+/* Hover/focus preview overlay */
+.movie-hover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  background: linear-gradient(
+    to top,
+    rgba(8, 12, 9, 0.85) 0%,
+    rgba(8, 12, 9, 0.25) 40%,
+    transparent 70%
+  );
+}
+
+.movie-card:hover .movie-hover,
+.movie-card:focus-within .movie-hover {
+  opacity: 1;
+}
+
+.movie-hover-cue {
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-accent);
+  background-color: var(--accent);
+  padding: 7px 18px;
+  border-radius: 999px;
 }
 
 .movie-info {
@@ -38,10 +105,12 @@
 }
 
 .movie-title {
-  font-size: 15px;
+  font-family: var(--font-condensed);
+  font-size: 18px;
   font-weight: 600;
+  letter-spacing: 0.02em;
   margin: 0;
-  color: #ffffff;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -49,25 +118,30 @@
   -webkit-box-orient: vertical;
 }
 
+/* Star rating pill — rounded, semi-transparent dark backdrop floats cleanly
+   over any poster. */
 .movie-rating {
   position: absolute;
   top: 8px;
   left: 8px;
-  display: flex;
+  z-index: 2;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  color: #ffd700;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
   margin: 0;
-  font-weight: 500;
   white-space: nowrap;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 3px 8px;
-  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  padding: 4px 10px;
+  border-radius: 999px;
 }
 
 .star-icon {
-  color: #ffd700;
+  color: var(--rating);
 }
 
 .card-icons {
@@ -85,7 +159,7 @@
   background: none;
   border: none;
   border-radius: 50%;
-  color: #ffffff;
+  color: var(--text);
   cursor: pointer;
   transition: transform 0.15s, color 0.15s;
 }
@@ -96,12 +170,12 @@
 
 /* Pop when toggled on */
 .heart-button.active {
-  color: #e50914;
+  color: var(--accent);
   animation: icon-pop 0.35s ease;
 }
 
 .eye-button.active {
-  color: #4fc3f7;
+  color: var(--watched);
   animation: icon-pop 0.35s ease;
 }
 

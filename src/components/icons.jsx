@@ -103,6 +103,47 @@ export function FilmIcon({ size = 24, ...props }) {
   );
 }
 
+// Camera aperture / iris — evokes "light" (lumière) and cinema. Brand mark.
+export function ApertureIcon({ size = 24, ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>
+      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="14.31" y1="8" x2="20.05" y2="17.94" />
+        <line x1="9.69" y1="8" x2="21.17" y2="8" />
+        <line x1="7.38" y1="12" x2="13.12" y2="2.06" />
+        <line x1="9.69" y1="16" x2="3.95" y2="6.06" />
+        <line x1="14.31" y1="16" x2="2.83" y2="16" />
+        <line x1="16.62" y1="12" x2="10.88" y2="21.94" />
+      </g>
+    </svg>
+  );
+}
+
+// Sunburst / radiant light — for "Lumière" (light). Solid center dot with
+// alternating long/short rays beaming outward. Brand mark (no background).
+export function SunburstIcon({ size = 28, ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>
+      <circle cx="12" cy="12" r="3.4" fill="currentColor" />
+      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+        {/* 4 long cardinal rays */}
+        <line x1="12" y1="1.5" x2="12" y2="5.2" />
+        <line x1="12" y1="18.8" x2="12" y2="22.5" />
+        <line x1="1.5" y1="12" x2="5.2" y2="12" />
+        <line x1="18.8" y1="12" x2="22.5" y2="12" />
+      </g>
+      <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.9">
+        {/* 4 short diagonal rays */}
+        <line x1="4.6" y1="4.6" x2="6.9" y2="6.9" />
+        <line x1="19.4" y1="4.6" x2="17.1" y2="6.9" />
+        <line x1="4.6" y1="19.4" x2="6.9" y2="17.1" />
+        <line x1="19.4" y1="19.4" x2="17.1" y2="17.1" />
+      </g>
+    </svg>
+  );
+}
+
 export function BackIcon({ size = 18, ...props }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>
@@ -110,6 +151,21 @@ export function BackIcon({ size = 18, ...props }) {
         <line x1="19" y1="12" x2="5" y2="12" />
         <polyline points="12 19 5 12 12 5" />
       </g>
+    </svg>
+  );
+}
+
+export function ChevronUpIcon({ size = 22, ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...props}>
+      <polyline
+        points="6 15 12 9 18 15"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

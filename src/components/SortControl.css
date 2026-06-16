@@ -8,15 +8,35 @@
 .sort-label {
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .sort-select {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #333;
+  /* Match the search input's height (same vertical padding + font size) so
+     both pills sit at the same height in the header row. */
+  padding: 11px 34px 11px 16px;
+  font-size: 15px;
+  border: 1px solid var(--border);
   border-radius: 20px;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: var(--surface);
+  color: var(--text);
   cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  /* Replace the native dropdown arrow with a custom chevron sat close to the
+     text (the native one floats too far right). */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca093' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.sort-select:hover,
+.sort-select:focus,
+.sort-select:focus-visible {
+  /* Match the search input exactly: amber border on hover/focus, no outline
+     ring (the global :focus-visible ring would otherwise differ). */
+  outline: none;
+  border-color: var(--accent);
 }

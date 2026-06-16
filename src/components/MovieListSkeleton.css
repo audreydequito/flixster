@@ -1,0 +1,60 @@
+/* Reuses the .movie-list grid (imported via MovieList.css) for identical layout. */
+
+/* Ease the placeholder grid in instead of popping it on screen. */
+.skeleton-list {
+  animation: skeleton-fade-in 0.3s ease both;
+}
+
+@keyframes skeleton-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.skeleton-line-title {
+  width: 80%;
+}
+
+.skeleton-line-sub {
+  width: 45%;
+}
+
+/* Shimmer: a moving highlight sweep across each placeholder element. */
+.skeleton-poster,
+.skeleton-line {
+  background: linear-gradient(
+    100deg,
+    var(--surface) 30%,
+    var(--surface-2) 50%,
+    var(--surface) 70%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}

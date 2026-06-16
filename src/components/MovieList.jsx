@@ -11,10 +11,11 @@ function MovieList({
 }) {
   return (
     <div className="movie-list">
-      {movies.map((movie) => (
+      {movies.map((movie, index) => (
         <MovieCard
           key={movie.id}
           movie={movie}
+          index={index}
           onClick={() => onMovieClick(movie)}
           isFavorite={favoriteIds.has(movie.id)}
           isWatched={watchedIds.has(movie.id)}

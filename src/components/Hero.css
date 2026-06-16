@@ -1,44 +1,315 @@
 .hero {
-  max-width: 1400px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: 24px;
+  /* Sides match the gutter so the hero's left/right edges line up with the
+     nav, section heading, and movie grid. */
+  padding: 20px var(--gutter) 0;
 }
 
 .hero-inner {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-height: 380px;
+  /* No horizontal padding: text starts at the gutter line, perfectly aligned
+     with the grid items and nav brand below/above it. */
+  padding: 44px 0;
+  border-radius: 14px;
+  overflow: hidden;
+  animation: hero-fade 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Plain gradient banner (search / pre-load) */
+.hero-fallback {
   justify-content: flex-end;
-  min-height: 220px;
-  padding: 48px 40px;
-  border-radius: 12px;
-  background: linear-gradient(120deg, #5a0a0f 0%, #141414 70%);
+  min-height: 260px;
+  padding: 44px 40px;
+  background: linear-gradient(120deg, var(--hero-from) 0%, var(--bg) 70%);
   box-shadow: inset 0 -80px 80px rgba(0, 0, 0, 0.6);
 }
 
-.hero-title {
-  margin: 0 0 8px;
-  font-size: 36px;
-  font-weight: 700;
-  color: #ffffff;
+/* Featured-movie banner: full-bleed backdrop with left-weighted content */
+.hero-featured {
+  position: relative;
+  width: 100%;
+  border: none;
+  text-align: left;
+  background-color: var(--surface);
+  overflow: hidden;
 }
 
-.hero-subtitle {
-  margin: 0;
+/* Backdrop layer — sits beneath the gradients. Keyed in JSX so it crossfades
+   in and replays the slow Ken Burns drift on every slide change. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center 15%;
+  animation:
+    hero-cross 0.8s ease both,
+    ken-burns 20s ease-out both;
+}
+
+@keyframes hero-cross {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ken-burns {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.09) translate(-1.5%, -1%); }
+}
+
+/* L→R gradient keeps left text legible while the backdrop shows on the right;
+   a strong bottom gradient fades the banner seamlessly into the page bg. */
+.hero-featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 0%,
+      rgba(13, 19, 15, 0.88) 26%,
+      rgba(13, 19, 15, 0.45) 58%,
+      rgba(13, 19, 15, 0.08) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(13, 19, 15, 0.85) 0%,
+      rgba(13, 19, 15, 0.3) 28%,
+      transparent 60%
+    );
+}
+
+/* Second layer fades the TOP and RIGHT edges into the page so all four sides
+   blend seamlessly (left & bottom are handled by ::before above). */
+.hero-featured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(13, 19, 15, 0.8) 0%, transparent 22%),
+    linear-gradient(to left, rgba(13, 19, 15, 0.8) 0%, transparent 20%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  /* Crossfades + rises slightly on each slide change (keyed in JSX). */
+  animation: hero-content-in 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+  /* Starts at the gutter line — aligned with the nav brand, section heading,
+     and the first column of the movie grid. */
+}
+
+.hero-eyebrow {
+  margin: 0 0 14px;
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Meta row: rating + year, condensed like the screenshot */
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-family: var(--font-body);
   font-size: 16px;
-  color: #cccccc;
+  font-weight: 600;
+  color: var(--text-2);
 }
 
-@media (max-width: 600px) {
-  .hero {
-    padding: 12px;
-  }
+.hero-meta-sep {
+  color: var(--text-dim);
+}
 
+.hero-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rating);
+}
+
+.hero-rating .star-icon {
+  color: var(--rating);
+}
+
+/* Huge poster-style title */
+.hero-title {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  font-size: 84px;
+  line-height: 0.92;
+  color: var(--text);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+}
+
+.hero-overview {
+  margin: 0 0 28px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-2);
+  max-width: 540px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-family: var(--font-condensed);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s, background-color 0.2s, color 0.2s;
+}
+
+.hero-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-btn-primary {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.hero-btn-primary:hover {
+  background-color: var(--accent-hi);
+}
+
+.hero-btn-secondary {
+  background-color: rgba(0, 0, 0, 0.55);
+  color: var(--text);
+  backdrop-filter: blur(2px);
+}
+
+.hero-btn-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.hero-btn-secondary.active {
+  color: var(--accent);
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Carousel dots */
+.hero-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.hero-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(236, 228, 212, 0.35);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s, width 0.2s;
+}
+
+.hero-dot:hover {
+  background-color: rgba(236, 228, 212, 0.6);
+}
+
+.hero-dot.active {
+  width: 26px;
+  border-radius: 5px;
+  background-color: var(--accent);
+}
+
+@media (max-width: 900px) {
   .hero-inner {
-    min-height: 140px;
-    padding: 24px 20px;
+    min-height: 360px;
+    padding: 36px 0;
   }
 
   .hero-title {
-    font-size: 26px;
+    font-size: 60px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-inner {
+    min-height: 320px;
+    padding: 26px 0;
+  }
+
+  .hero-fallback {
+    min-height: 170px;
+    padding: 28px 20px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 44px;
+  }
+
+  .hero-overview {
+    font-size: 14px;
+  }
+
+  /* Soften the gradient angle on narrow screens so text stays readable */
+  .hero-featured::before {
+    background:
+      linear-gradient(
+        90deg,
+        var(--bg) 0%,
+        rgba(13, 19, 15, 0.88) 45%,
+        rgba(13, 19, 15, 0.45) 100%
+      ),
+      linear-gradient(to top, rgba(13, 19, 15, 0.85) 0%, rgba(13, 19, 15, 0.3) 32%, transparent 62%);
   }
 }

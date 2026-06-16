@@ -1,16 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap');
+
+/* ── Joseon palette (muted forest green + amber) ──────────────────────
+   Single source of truth for color. Swap a value here to retheme the
+   whole app. */
+:root {
+  /* base & surfaces */
+  --bg: #0d130f;          /* page — deep muted green-black */
+  --bg-darkest: #080c09;  /* footer */
+  --surface: #161e18;     /* cards / modal / inputs */
+  --surface-2: #1f2921;   /* raised surfaces */
+  --surface-3: #121813;   /* trailer-empty */
+  --sidebar-bg: #111711;
+
+  /* borders */
+  --border: #2b362d;
+  --border-soft: #1f2921;
+  --border-hi: #3a463c;
+
+  /* brand / accent — warm amber (the "9.0" ring tone) */
+  --accent: #d9a14e;
+  --accent-hi: #e8b569;
+  --accent-press: #a8752f;
+
+  /* semantic */
+  --rating: #f0c14b;       /* warm gold star */
+  --watched: #3d8870;      /* deeper jade — fits the green palette */
+  --ring: #d9a14e;         /* amber rating ring (matches accent) */
+  --error: #e2766b;
+
+  /* text — cream on green */
+  --text: #ece4d4;         /* primary */
+  --text-2: #d2cbbd;       /* slightly muted body */
+  --text-muted: #9ca093;   /* secondary */
+  --text-dim: #6f7468;     /* placeholders / faint */
+  --on-accent: #1a1206;    /* dark text on amber buttons */
+
+  /* hero gradient base (rgb of --bg, used in rgba overlays) */
+  --hero-from: #16241c;
+
+  /* fonts */
+  --font-display: 'Bebas Neue', 'Helvetica Neue', Arial, sans-serif;  /* huge poster titles */
+  --font-head: 'Oswald', 'Helvetica Neue', Arial, sans-serif;         /* brand, section heads, labels */
+  --font-condensed: 'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif; /* meta, tags, buttons */
+  --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;          /* body copy */
+
+  /* layout — one content width + gutter shared by nav, hero, section, grid
+     so every left/right edge lines up. */
+  --content-max: 1400px;
+  --gutter: 48px;
+}
+
+@media (max-width: 1024px) {
+  :root { --gutter: 28px; }
+}
+
+@media (max-width: 600px) {
+  :root { --gutter: 16px; }
+}
 
 body {
   margin: 0;
-  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  background-color: #141414;
-  color: #ffffff;
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-display);
 }
 
 button {
@@ -20,7 +78,20 @@ button {
 
 /* Visible focus ring for keyboard users on all interactive elements. */
 :focus-visible {
-  outline: 2px solid #ffffff;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Respect users who prefer reduced motion — neutralize all animation
+   and transition across the app while keeping it fully usable. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

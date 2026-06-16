@@ -3,7 +3,7 @@ import './Footer.css';
 function Footer() {
   return (
     <footer className="App-footer">
-      <p className="footer-copyright">© 2026 Flixster</p>
+      <p className="footer-copyright">© 2026 Lumière</p>
       <p className="footer-links">
         Movie data provided by{' '}
         <a

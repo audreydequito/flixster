@@ -4,8 +4,11 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import MovieList from './components/MovieList';
+import MovieListSkeleton from './components/MovieListSkeleton';
 import MovieModal from './components/MovieModal';
 import Sidebar from './components/Sidebar';
+import BackToTop from './components/BackToTop';
+import { SearchIcon, FilmIcon } from './components/icons';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -19,6 +22,9 @@ const App = () => {
   const [sortOption, setSortOption] = useState('default');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // The first few Now Playing movies (with backdrops) spotlighted in the hero carousel.
+  const [featuredList, setFeaturedList] = useState([]);
 
   // Modal / movie-details state. selectedMovieId being non-null = modal is open.
   const [selectedMovieId, setSelectedMovieId] = useState(null);
@@ -63,6 +69,11 @@ const App = () => {
         setMovies((prevMovies) => [...prevMovies, ...data.results]);
       } else {
         setMovies(data.results);
+        // Spotlight the first few movies with a backdrop in the hero carousel,
+        // only on the Now Playing list — not on search results.
+        if (targetMode === 'nowPlaying' && data.results.length > 0) {
+          setFeaturedList(data.results.filter((m) => m.backdrop_path).slice(0, 6));
+        }
       }
     } catch (err) {
       setError(err.message);
@@ -185,17 +196,44 @@ const App = () => {
       />
 
       <main className="App-main">
-        <Hero />
+        <Hero
+          movies={featuredList}
+          onMovieClick={handleMovieClick}
+          isSearching={mode === 'search'}
+          favoriteIds={favoriteIds}
+          onToggleFavorite={toggleFavorite}
+        />
 
         {error && <div className="error">{error}</div>}
 
         {!error && movies.length === 0 && !isLoading && (
           <div className="no-movies">
-            {mode === 'search'
-              ? 'No movies match your search'
-              : 'No movies available'}
+            <span className="no-movies-icon">
+              {mode === 'search' ? <SearchIcon size={48} /> : <FilmIcon size={48} />}
+            </span>
+            <p className="no-movies-text">
+              {mode === 'search'
+                ? 'No movies match your search'
+                : 'No movies available'}
+            </p>
           </div>
         )}
+
+        {!error && (movies.length > 0 || (isLoading && movies.length === 0)) && (
+          <div className="section-head">
+            <h2 className="section-title">
+              {mode === 'search' ? 'Search Results' : 'Now Playing'}
+            </h2>
+            <p className="section-subtitle">
+              {mode === 'search'
+                ? 'Movies matching your search.'
+                : 'The latest movies, ready to browse.'}
+            </p>
+          </div>
+        )}
+
+        {/* Initial load / new search: shimmering placeholder grid. */}
+        {isLoading && movies.length === 0 && !error && <MovieListSkeleton />}
 
         <MovieList
           movies={sortedMovies}
@@ -206,7 +244,10 @@ const App = () => {
           onToggleWatched={toggleWatched}
         />
 
-        {isLoading && <div className="loading">Loading movies...</div>}
+        {/* Load More append: a lightweight text indicator (grid already shown). */}
+        {isLoading && movies.length > 0 && (
+          <div className="loading">Loading more...</div>
+        )}
 
         {hasMorePages && !isLoading && movies.length > 0 && (
           <div className="load-more-container">
@@ -241,6 +282,8 @@ const App = () => {
       />
 
       <Footer />
+
+      <BackToTop />
     </div>
   );
 };

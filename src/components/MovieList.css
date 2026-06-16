@@ -8,8 +8,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 24px;
-  padding: 24px;
-  max-width: 1400px;
+  /* Same content width + gutter as nav/hero/section so edges line up.
+     Top padding is 0 — the section heading owns the gap above the grid. */
+  padding: 0 var(--gutter) 32px;
+  max-width: var(--content-max);
   margin: 0 auto;
 }
 
@@ -18,7 +20,7 @@
   .movie-list {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
-    padding: 16px;
+    padding: 0 var(--gutter) 24px;
   }
 }
 
@@ -27,7 +29,7 @@
   .movie-list {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    padding: 12px;
+    padding: 0 var(--gutter) 16px;
   }
 }
 
@@ -37,9 +39,27 @@
   text-align: center;
   padding: 48px;
   font-size: 18px;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .error {
-  color: #ff6b6b;
+  color: var(--error);
+}
+
+/* Iconified empty state for no search results / no movies. */
+.no-movies {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.no-movies-icon {
+  display: flex;
+  color: var(--border-hi);
+}
+
+.no-movies-text {
+  margin: 0;
+  color: var(--text-muted);
 }

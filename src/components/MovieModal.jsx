@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './MovieModal.css';
 import { HeartIcon, EyeIcon, EyeOffIcon, CloseIcon, PlayIcon, BackIcon, FilmIcon } from './icons';
 
@@ -95,6 +95,24 @@ function MovieModal({
   const [aiInsight, setAiInsight] = useState(null);
   const [loadingInsight, setLoadingInsight] = useState(false);
 
+  // Rating ring + number count up from zero each time a movie opens.
+  const [animatedRating, setAnimatedRating] = useState(0);
+
+  // Drives the exit animation: set true, play the -out keyframes, then unmount.
+  const [closing, setClosing] = useState(false);
+  const closeTimer = useRef(null);
+
+  // Play the exit animation, then actually close after it finishes (~220ms,
+  // matching the CSS). Guard against double-trigger while already closing.
+  const requestClose = () => {
+    if (closing) return;
+    setClosing(true);
+    closeTimer.current = setTimeout(onClose, 220);
+  };
+
+  // Clear the pending close timer if the modal unmounts first.
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
   // Escape collapses an expanded trailer first, otherwise closes the modal.
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -102,12 +120,12 @@ function MovieModal({
       if (isTrailerExpanded) {
         setIsTrailerExpanded(false);
       } else {
-        onClose();
+        requestClose();
       }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isTrailerExpanded]);
+  }, [isTrailerExpanded, closing]);
 
   // Fetch the AI watch recommendation once details have loaded. Keyed on the
   // movie id so opening a different movie starts fresh. `ignore` guards against
@@ -134,9 +152,37 @@ function MovieModal({
     };
   }, [movieDetails?.id]);
 
+  // Count the rating ring/number up from zero each time a movie opens. Honors
+  // reduced-motion by jumping straight to the final value.
+  useEffect(() => {
+    const target = movieDetails?.vote_average ?? 0;
+    if (!movieDetails?.id) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setAnimatedRating(target);
+      return;
+    }
+
+    const DURATION = 650;
+    let raf;
+    let start;
+    const tick = (now) => {
+      if (start === undefined) start = now;
+      const progress = Math.min((now - start) / DURATION, 1);
+      // Ease-out cubic so it decelerates into the final value.
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedRating(target * eased);
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+
+    setAnimatedRating(0);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [movieDetails?.id, movieDetails?.vote_average]);
+
   // Clicking the dark overlay (but not the modal body) closes the modal.
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) requestClose();
   };
 
   const backdropUrl = movieDetails?.backdrop_path
@@ -165,7 +211,8 @@ function MovieModal({
   const rating = movieDetails?.vote_average ?? 0;
   const ringRadius = 18;
   const ringCircumference = 2 * Math.PI * ringRadius;
-  const ringOffset = ringCircumference * (1 - rating / 10);
+  // Ring + number follow the animated value so they count up on open.
+  const ringOffset = ringCircumference * (1 - animatedRating / 10);
 
   const trailer =
     movieDetails?.videos?.results?.find(
@@ -178,9 +225,14 @@ function MovieModal({
     : null;
 
   return (
-    <div className="modal-overlay" onClick={handleOverlayClick}>
+    <div
+      className={`modal-overlay ${closing ? 'closing' : ''}`}
+      onClick={handleOverlayClick}
+    >
       <div
-        className={`modal-content ${isTrailerExpanded ? 'expanded' : ''}`}
+        className={`modal-content ${isTrailerExpanded ? 'expanded' : ''} ${
+          closing ? 'closing' : ''
+        }`}
         role="dialog"
         aria-modal="true"
       >
@@ -199,7 +251,7 @@ function MovieModal({
               ESCAPE
             </span>
 
-            <button className="modal-close" onClick={onClose} aria-label="Close">
+            <button className="modal-close" onClick={requestClose} aria-label="Close">
               <CloseIcon />
             </button>
           </>
@@ -247,9 +299,6 @@ function MovieModal({
                     </span>
                     Play
                   </button>
-                  <span className="modal-watch-link">
-                    {isWatched ? 'Continue Watching' : 'Start Watching'}
-                  </span>
                   <span className="modal-rating-ring">
                     <svg
                       viewBox="0 0 44 44"
@@ -277,8 +326,11 @@ function MovieModal({
                       />
                     </svg>
                     <span className="modal-rating-value">
-                      {rating.toFixed(1)}
+                      {animatedRating.toFixed(1)}
                     </span>
+                  </span>
+                  <span className="modal-watch-link">
+                    {isWatched ? 'Continue Watching' : 'Start Watching'}
                   </span>
                 </div>
 
@@ -358,7 +410,7 @@ function MovieModal({
               </div>
 
               <div className="ai-insight">
-                <h3 className="ai-insight-label">AI Watch Recommendation</h3>
+                <h3 className="ai-insight-label">Watch Recommendation</h3>
                 {loadingInsight ? (
                   <p className="ai-insight-loading">
                     ✨ Getting a recommendation…

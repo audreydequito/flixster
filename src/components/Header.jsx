@@ -1,7 +1,7 @@
 import './Header.css';
 import SearchBar from './SearchBar';
 import SortControl from './SortControl';
-import { FilmIcon, MenuIcon } from './icons';
+import { SunburstIcon, MenuIcon } from './icons';
 
 function Header({
   searchQuery,
@@ -17,11 +17,11 @@ function Header({
       <div className="header-inner">
         <div className="nav-brand">
           <div className="brand-logo">
-            <FilmIcon size={24} />
+            <SunburstIcon size={40} />
           </div>
           <div className="brand-text">
-            <h1 className="brand-name">flixster</h1>
-            <p className="tagline">browse whats playing</p>
+            <h1 className="brand-name">Lumière</h1>
+            <p className="tagline">where every frame finds the light</p>
           </div>
         </div>
 

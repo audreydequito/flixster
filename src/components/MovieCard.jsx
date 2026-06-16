@@ -1,14 +1,37 @@
+import { useEffect, useRef, useState } from 'react';
 import './MovieCard.css';
 import { StarIcon, HeartIcon, EyeIcon, EyeOffIcon } from './icons';
 
 function MovieCard({
   movie,
+  index = 0,
   onClick,
   isFavorite,
   isWatched,
   onToggleFavorite,
   onToggleWatched,
 }) {
+  const cardRef = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  // Reveal the card on scroll-in (and immediately if already on screen).
+  // Observer disconnects after the first reveal so it only fires once.
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -40px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : 'https://via.placeholder.com/500x750/1a1a1a/ffffff?text=No+Poster';
@@ -34,12 +57,14 @@ function MovieCard({
 
   return (
     <div
-      className="movie-card"
+      ref={cardRef}
+      className={`movie-card ${inView ? 'in-view' : ''}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       aria-label={`View details for ${movie.title}`}
+      style={{ animationDelay: `${Math.min(index, 12) * 0.04}s` }}
     >
       <div className="movie-poster-wrap">
         <img
@@ -47,9 +72,14 @@ function MovieCard({
           alt={`${movie.title} poster`}
           className="movie-poster"
         />
-        <p className="movie-rating">
+        <span className="movie-rating">
           <StarIcon className="star-icon" /> {movie.vote_average.toFixed(1)}
-        </p>
+        </span>
+
+        {/* Hover/focus preview — a centered "View Details" cue */}
+        <div className="movie-hover" aria-hidden="true">
+          <span className="movie-hover-cue">View Details</span>
+        </div>
       </div>
       <div className="movie-info">
         <h3 className="movie-title">{movie.title}</h3>

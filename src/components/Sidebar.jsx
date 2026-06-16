@@ -30,9 +30,14 @@ function Sidebar({
     onClose();
   };
 
-  const renderList = (movies, emptyText, onRemove) => {
+  const renderList = (movies, emptyIcon, emptyText, onRemove) => {
     if (movies.length === 0) {
-      return <p className="sidebar-empty">{emptyText}</p>;
+      return (
+        <div className="sidebar-empty">
+          <span className="sidebar-empty-icon">{emptyIcon}</span>
+          <p className="sidebar-empty-text">{emptyText}</p>
+        </div>
+      );
     }
     return (
       <ul className="sidebar-list">
@@ -117,14 +122,24 @@ function Sidebar({
             <h3 className="sidebar-section-title">
               <HeartIcon size={18} filled className="section-heart" /> Favorites
             </h3>
-            {renderList(favorites, 'No favorites yet', onToggleFavorite)}
+            {renderList(
+              favorites,
+              <HeartIcon size={40} filled />,
+              'No favorites yet — tap the heart on a movie to save it here.',
+              onToggleFavorite
+            )}
           </section>
 
           <section id="watched-section" className="sidebar-section">
             <h3 className="sidebar-section-title">
               <EyeIcon size={18} /> Watched
             </h3>
-            {renderList(watched, 'Nothing watched yet', onToggleWatched)}
+            {renderList(
+              watched,
+              <EyeIcon size={40} />,
+              'Nothing watched yet — mark movies with the eye icon to track them.',
+              onToggleWatched
+            )}
           </section>
         </div>
       </aside>
